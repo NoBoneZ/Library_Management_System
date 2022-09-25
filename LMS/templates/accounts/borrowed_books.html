@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h3>Unpicked Books</h3>
+<ul>
+    {% for unpicked_book in unpicked_books %}
+    <li>{{unpicked_book}}</li>
+    {% empty %}
+    <li>I'm Empty</li>
+    {% endfor %}
+</ul>
+<br>
+<br>
+
+<h3>Borrowed Books</h3>
+<ul>
+    {% for borrowed_book in borrowed_books %}
+    <li>{{borrowed_book}} due on {{borrowed_book.date_to_be_returned}}</li>
+    <a href="{% url 'management_system:make_book_return' borrowed_book.id %}">Make Book Return</a>
+    {% empty %}
+    <li>I'm Empty</li>
+    {% endfor %}
+</ul>
+
+<h3>Default Books</h3>
+{% endblock %}

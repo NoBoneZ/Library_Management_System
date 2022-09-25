@@ -1,0 +1,99 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<table>
+
+    <h2>Library Stock</h2>
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Title</th>
+            <th>Quantity in the library</th>
+            <th>Quantity lent out</th>
+            <th>Total stock</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+            {% for book in all_books %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{book.title}}</td>
+                <td>{{book.quantity_available}}</td>
+                <td>{{book.quantity_lent_out}}</td>
+                <td>{{book.quantity}}</td>
+            </tr>
+            {% empty %}
+            <td colspan="5">No Book In The Library</td>
+            {% endfor %}
+
+
+    </tbody>
+</table>
+
+<br>
+<br>
+
+<table>
+
+    <h2>Popular Books</h2>
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Title</th>
+            <th>Times Lent</th>
+            <th>Quantity in the library</th>
+             <th>Total stock</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+            {% for book in popular_books %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{book.title}}</td>
+                <td>{{book.times_borrowed}}</td>
+                <td>{{book.quantity_available}}</td>
+                <td>{{book.quantity}}</td>
+            </tr>
+            {% empty %}
+            <td colspan="5">No Book In This Section</td>
+            {% endfor %}
+
+
+    </tbody>
+</table>
+
+<br>
+<br>
+
+<table>
+    <h2>High Paying Customers</h2>
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Name</th>
+            <th>Wallet ID</th>
+            <th>Amount Spent</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+            {% for customer in high_paying_customers %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{customer.owner.username}}</td>
+                <td>{{customer.wallet_number}}</td>
+                <td>{{customer.sum_of_debit}}</td>
+            </tr>
+            {% empty %}
+            <td colspan="4">No User fits this description</td>
+            {% endfor %}
+
+
+    </tbody>
+</table>
+{% endblock %}

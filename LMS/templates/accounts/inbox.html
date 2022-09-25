@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<ul>
+  {% for user_message in user_messages %}
+  <li>{{user_message.sender}}</li>
+  <li>{{user_message.message}}</li>
+  {% empty %}
+  <li><p>I'm Empty</p></li>
+  {% endfor %}
+</ul>
+{% endblock %}

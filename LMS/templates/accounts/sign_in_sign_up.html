@@ -1,0 +1,186 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .pop--up--sign--up{
+        height:700px;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        width:400px;
+        padding:20px, 30px;
+        background-color:white;
+        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
+        border-radius:10px;
+    }
+
+    .close-btn{
+        position:absolute;
+        top:10px;
+        right:15px;
+        width:25px;
+        height:25px;
+        background-color:#888;
+        color:#eee;
+        cursor:pointer;
+        text-align:center;
+        border-radius:15px;
+        line-height:15px;
+
+     }
+
+    .pop--up--sign--up img{
+        height: 80px;
+        width: 150px;
+        margin-left: 90px;
+        margin-top: 20px;
+    }
+
+
+    .pop--up--sign--up h3{
+        height: 35px;
+        width: 229px;
+        font-family: Mulish;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 29px;
+        text-align: center;
+        color:#54565B;
+        margin: -10px 0px 0px 50px
+    }
+
+
+     .pop--up--sign--up p{
+        font-family: Mulish;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 29px;
+        text-align: center;
+        color:#9FA19C;
+    }
+
+
+    #p--term--2{
+        margin-top:-15px;
+    }
+
+
+    .sign-up--form{
+       margin:15px;
+
+    }
+
+    .sign-up--form label{
+       margin-left:20px;
+    }
+
+     .sign-up--form input[type=tel],
+      .sign-up--form select,
+      .sign-up--form input[type=email],
+      .sign-up--form input[type=password],
+      .sign-up--form input[type=text]{
+        border:1px solid #2A639C;
+        height: 30px;
+        width: 300px;
+        border-radius: 15px;
+        margin-top:5px;
+        margin-left:20px;
+
+    }
+
+
+
+    .sign-up--form input[type=submit]{
+        border:1px solid #2A639C;
+        background:#2A639C;
+        margin-top:5px;
+        height: 38px;
+        width: 330px;
+        border-radius: 8px;
+        color:white;
+        margin-left:20px;
+
+
+    }
+
+    #signup-paragraph{
+       text-decoration:none;
+       margin-left:-100px;
+       margin-top:-15px;
+
+    }
+
+     .pop--up--sign--up a{
+       text-decoration:none;
+       margin-top:-5px;
+    }
+
+
+    #back-to-signin{
+        height: 13px;
+        width: 6px;
+        margin-right:10px;
+
+    }
+
+</style>
+
+
+
+<div class="pop--up--sign--up">
+    <img src="{% static 'images/v logo.png'%}" alt="Vilgax Library Sign Up Form">
+    <div class="sign-up--form">
+<!--        <div class="close-btn">&times;</div>-->
+        <form action="" method="POST" enctype="multipart/form-data">
+
+            <h3>Create Account</h3>
+                    <p id="p--term-1">By signing up in Vilgax Library,</p>
+                <p id="p--term--2">you hereby agree to the terms and condition</p>
+            {% csrf_token %}
+            <label>Email</label>
+            <br>
+            {{form.email}}
+            <br>
+            <br>
+
+            <label>Username</label>
+            <br>
+            {{form.username}}
+            <br>
+            <br>
+
+<!--            <label>Phone Number</label>-->
+<!--            <br>-->
+<!--            {{form.phone_number}}-->
+<!--            <br>-->
+<!--            <br>-->
+
+            <label>Gender</label>
+            <br>
+            {{form.gender}}
+            <br>
+            <br>
+
+            <label>Password</label>
+            <br>
+            {{form.password1}}
+            <br>
+            <br>
+
+            <label>Password Confirmation</label>
+            <br>
+            {{form.password2}}
+            <br>
+            <br>
+
+            <input type="submit" value="Sign Up">
+        </form>
+    </div>
+
+    <p id="signup-paragraph"><a href="{% url 'accounts:sign_in' %}"><img id='back-to-signin' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To Sign In</a></p>
+</div>
+
+
+{% endblock %}

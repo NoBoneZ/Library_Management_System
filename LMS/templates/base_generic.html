@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    {% block title %}
+    <title>Title</title>
+    {% endblock %}
+</head>
+<body>
+
+<style>
+    #messages li{
+        list-style-type: none;
+    }
+</style>
+
+{% if messages %}
+<ul id="messages">
+    {% for message in messages %}
+    <li>{{message}}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>

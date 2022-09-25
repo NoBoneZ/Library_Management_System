@@ -1,0 +1,41 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div>
+  <h3>Book Request</h3>
+  <ul>
+    {% for book_request in book_requests %}
+    <li>{{book_request.name.username}} wants to lend {{book_request.book}}</li>
+    <a href="{% url 'management_system:accept_book_request' book_request.id %}">Accept</a>
+    <a href="{% url 'management_system:reject_book_request' book_request.id %}">Reject</a>
+    {% empty %}
+    <li>No book request yet </li>
+    {% endfor %}
+  </ul>
+
+
+  <h3>Unpicked books</h3>
+  <ul>
+    {% for unpicked_book in unpicked_books %}
+    <li>{{unpicked_book.book.title}} by {{unpicked_book.borrower.username}}</li>
+    <li><a href="{% url 'management_system:pick_unpicked_books' unpicked_book.id %}">Pick</a></li>
+    <li><a href="{% url 'management_system:delete_unpicked_books' unpicked_book.id %}">Delete</a></li>
+    {% empty %}
+    <li>No unpicked book at the moment</li>
+    {% endfor %}
+
+  </ul>
+
+  <h3>Book Return</h3>
+  <ul>
+    {% for book in book_returns %}
+    <li>{{book}}</li>
+    <a href="{% url 'management_system:approve_book_return' book.id %}">Approve</a>
+    <a href="{% url 'management_system:reject_book_return' book.id %}">Reject</a>
+    {% empty %}
+    <li>No Book Returns Yet</li>
+    {% endfor %}
+  </ul>
+
+</div>
+{% endblock %}

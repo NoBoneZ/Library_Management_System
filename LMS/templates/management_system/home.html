@@ -1,0 +1,457 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+{% block content %}
+<style>
+  .home--grid{
+    display: grid;
+    grid-template-columns:0.5fr 3fr;
+    background-color:white;
+  }
+
+  .genre--grid h3{
+    font-family: Sora;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 29px;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-top:55px;
+
+
+  }
+
+  .genre--grid li{
+    list-style-type:none;
+
+  }
+
+  .genre--grid a{
+    text-decoration:none;
+    color:#54565B;
+  }
+
+  .genre--icon{
+    height: 16px;
+    width: 16px;
+    margin:0px 0px -20px -35px;
+  }
+
+  .books--grid--top--image{
+    height: 333px;
+    width: 1250px;
+  }
+
+
+  .library--status{
+    height: 105px;
+    width: 450px;
+    background-color:#FFFFFF;
+    color:#1E5288;
+    margin:-200px 00px 0px 0px;
+    position: absolute;
+    top: 430px;
+    z-index: 1000;
+  }
+
+  .library--status h3{
+    font-family: Sora;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 48px;
+    letter-spacing: 0em;
+    text-align: left;
+    margin-top:-5px;
+  }
+
+  .library--status img{
+     height: 12px;
+     width: 12px;
+
+
+
+
+  }
+
+  .library--status p{
+    font-family: Sora;
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 27px;
+    font-family: Sora;
+    text-align: left;
+    {% if is_open %}
+      color:#3D7500;
+    {% else %}
+      color:red;
+    {% endif %}
+    margin: -5px 0px 25px 0px;
+
+
+  }
+
+
+  .library--search--appointment{
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      margin-bottom:30px;
+  }
+
+  .library--search{
+      height:220px;
+      background-color: #0C234B;
+
+  }
+
+  .library--search h3{
+      height: 41px;
+      width: 234px;
+      font-family: Sora;
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 40px;
+      letter-spacing: 0em;
+      text-align: left;
+      color:white;
+      margin-left:10px;
+
+  }
+
+  .library--search input[type=text]{
+      height: 50px;
+      width: 800px;
+      border-radius:3px;
+      margin-top: 10px;
+      margin-left:10px;
+  }
+
+
+   .library--search button{
+      height:30px;
+      float: right;
+      margin: -35px 90px 0px 0px;
+      background-color: #790417;
+      color: #FFFFFF;
+      padding:5px;
+      border-radius:5px;
+      z-index:1000;
+      position: absolute;
+      top: 610px;
+      left:970px;
+      z-index: 1000;
+  }
+
+
+  .library--appointment{
+      width: 340px;
+      margin-left: 10px;
+  }
+
+  .working--hours{
+    margin:5px;
+    background-color:#E2E9EB;
+    padding:10px;
+
+  }
+
+  .working--hours h3{
+    height: 30px;
+    width: 168px;
+    font-family: Sora;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 30px;
+    text-align: left;
+    color: #001C48;
+  }
+
+  .first--p{
+    height: 20px;
+    width: 116px;
+    font-family: Sora;
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 15px;
+    text-align: left;
+    color:#001C48;
+  }
+
+  .second--p{
+      height: 19px;
+      width: 240px;
+      font-family: Milo OT;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 20px;
+      text-align: left;
+      color:#333333;
+  }
+
+
+  .library--appointment button{
+    background-color:#790417;
+    height: 30px;
+    width: 158px;
+    margin: 5px;
+    color:white;
+    border: 1px solid #790417;
+  }
+
+  .library--appointment span{
+      font-family: Sora;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 15px;
+      text-align: left;
+  }
+
+  .super--books--container{
+     display:grid;
+     grid-template-columns:0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
+     column-gap: 5px;
+     row-gap:5px;
+  }
+
+
+  .book--container{
+     height: 300px;
+     width:215px;
+     border:1px solid red;
+     border-radius: 10px;
+     padding:5px;
+  }
+
+
+   .book--container img{
+      height:200px;
+      width:200px;
+      padding:10px;
+   }
+
+
+   .book--container p{
+      font-family: Sora;
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 30px;
+      text-align: left;
+      display: flex;
+      justify-content:center;
+      align-items:center;
+      margin-top: 0px;
+   }
+
+   .book--container button{
+      margin-left:37px;
+      margin-bottom:3px;
+      background-color: #FD5252;
+      height: 26px;
+      width: 150px;
+      border:1px solid #FD5252;
+      border-radius:5px;
+   }
+
+   .home--profile--section{
+      position:absolute;
+      bottom:0;
+      margin-left:5px;
+
+   }
+
+   .home--profile--section img{
+      height:80px;
+      width:80px;
+      border-radius: 50%;
+      margin-bottom:-10px;
+
+
+
+   }
+
+   .home--profile--section h4{
+      font-family: Sora;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 29px;
+      text-align: left;
+      height: 11px;
+      width: 123.697265625px;
+   }
+
+   .home--profile--section p{
+      font-family: Sora;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 14px;
+      text-align: left;
+      color:#8B908B;
+
+   }
+
+    .home--profile--section button{
+      height: 40px;
+      width: 192px;
+      border-radius: 10px;
+      padding: 16px 56px 16px 56px;
+      background-color:#2A639C;
+      border: 1px solid #2A639C;
+      cursor:pointer;
+   }
+
+
+   .home--profile--section span{
+      color:white;
+      padding-bottom:9px;
+   }
+
+</style>
+
+
+<div class="home--grid">
+
+  <div class="genre--grid">
+    <h3>GENRE</h3>
+    <ul>
+      {% if genres %}
+      <a href="{% url 'management_system:home' %}">
+        <img src="{% static 'images/img.png'%}" alt="all" class="genre--icon">
+        <li>All Books</li>
+      </a>
+      {% endif %}
+
+      {% for genre in genres %}
+      <a href="{% url 'management_system:home' %}?search={{genre}}">
+        <img src="{% static 'images/img.png'%}" alt="{{genre}}" class="genre--icon">
+        <li>{{genre}}</li>
+      </a>
+      {% empty %}
+      <li>No Genre At The Moment</li>
+      {% endfor %}
+    </ul>
+
+      <div>
+        <a href="{% url 'management_system:librarian_book_page' %}">Library request</a>
+      <br>
+      <br>
+        <a href="{% url 'management_system:add_book' %}">Add Book</a>
+          <a href="{% url 'management_system:library_report'%}">Report</a>
+        <a href="{% url 'management_system:import_data'%}">import data</a>
+
+  </div>
+
+
+    <div class="home--profile--section">
+        {% if request.user.is_authenticated %}
+          <div class="profile">
+            <img src="{% static 'images/koder_blvck.jpg'%}" alt="{{request.user.username}}">
+            <h4>{{request.user.username | title}}</h4>
+
+            {% if not request.user.is_staff %}
+            <p>Reader</p>
+            {% else %}
+            <p>Librarian</p>
+            {% endif %}
+
+            <a href="#"><button type="submit"><span>View Profile</span></button></a>
+
+
+          </div>
+        {% else %}
+          <a href="#"><button type="submit"><span>Sign In</span></button></a>
+        {% endif %}
+
+
+
+      </div>
+
+
+
+
+
+  </div>
+
+  <div class="books--grid">
+
+    {% include 'navbar.html' %}
+
+    <img src="{% static 'images/container.png' %}" alt="Vilgax Library"  class="books--grid--top--image">
+
+    <div class="library--status">
+      <h3>Vilgax Library</h3>
+      {% if is_open %}
+      <img src="{% static 'images/img_2.png' %}" alt="Now Open">
+      <p>Open Now</p>
+      {% else %}
+      <img src="{% static 'images/img_2.png' %}" alt="Now Open">
+      <p>Currently Closed</p>
+      {% endif %}
+    </div>
+
+    <div class="library--search--appointment">
+      <div class="library--search">
+
+        <h3>Library Search</h3>
+
+        <form action="" method="GET">
+        <input type="text" name="search" placeholder="Enter the author, title or genre">
+          <button type="submit">Search</button>
+          </form>
+
+
+      </div>
+
+
+      <div class="library--appointment">
+        <div class="working--hours">
+          <h3>Today's Hours</h3>
+
+          <p class="first--p">Library access<span>{%if is_open %} currently open {% else %} Currently Closed {% endif %}</span></p>
+          <p class="second--p">Opens at {{open_time}}, Closes at {{close_time}}</p>
+        </div>
+
+        <button type="submit" class="appointment--study-room"><span>Book a study room</span></button>
+        <button type="submit" class="appointment--tutor"><span>Find a Tutor</span></button>
+
+      </div>
+
+
+
+
+    </div>
+
+
+
+
+    <h2>Books available ({{books.count}}) </h2>
+
+    <div class="super--books--container">
+          {% for book in books %}
+          <div class="book--container">
+            <img src="{% static 'images/image 17.png' %}" alt="{{book}}">
+            <p>{{book}}</p>
+<!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
+<!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
+
+            {% if book.bookID not in user_book_request %}
+            <a href="{% url 'management_system:book_request' book.bookID %}"><button>Make Book Request</button></a>
+            {% endif %}
+          </div>
+          {% empty %}
+          <div class="book--container">
+            <p>No Book available at the moment</p>
+          </div>
+          {% endfor %}
+    </div>
+
+
+
+  </div>
+
+
+</div>
+{% endblock %}
+
+
+
+

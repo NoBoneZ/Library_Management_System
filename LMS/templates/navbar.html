@@ -1,0 +1,111 @@
+{% load static %}
+
+<style>
+    .nav--bar{
+        background-color:white;
+        margin: 15px 0px 15px 15px;
+    }
+
+    .nav--logo{
+        height: 62px;
+        width: 80x;
+        top: 78.18408203125px;
+    }
+
+    .nav--bar a {
+        text-decoration:none;
+        color:black;
+        font-family: Sora;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 18px;
+        letter-spacing: 0em;
+        text-align: left;
+
+    }
+
+    .nav--bar ul{
+        float:right;
+        background-color:yelllow;
+    }
+
+    .nav--bar li {
+        list-style-type:none;
+        color:black;
+        display:inline;
+        margin-right: 80px
+    }
+
+    #navbar-first-child li{
+        color:#2A639C;
+        font-family: Sora;
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 18px;
+        letter-spacing: 0em;
+        text-align: left;
+
+    }
+
+    .authenticated-navbar-last-child{
+        height: 250px;
+        width: 49px;
+        background-color: #2A639C;
+        border-radius:5px;
+        padding: 16px;
+    }
+
+    .authenticated-navbar-last-child span{
+        font-family: Inter;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 17px;
+        text-align: left;
+        color:white;
+    }
+
+
+     .unauthenticated-navbar-last-child{
+        height: 250px;
+        width: 49px;
+        background-color: #AB0520;
+        border-radius:5px;
+        padding: 16px;
+    }
+
+    .unauthenticated-navbar-last-child span{
+        font-family: Inter;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 17px;
+        text-align: left;
+        color:white;
+    }
+
+
+</style>
+
+
+<div class="nav--bar">
+
+    <img src="{% static 'images/v logo black.png'%}" alt="Vilgax Library" class="nav--logo" >
+
+    <ul>
+       <a href="{% url 'management_system:home' %}" id="navbar-first-child"> <li >Home</li></a>
+        {% if not request.user.is_authenticated %}
+
+            <a href="{% url 'accounts:sign_in' %}"><li class="authenticated-navbar-last-child" ><span>Sign In</span></li></a>
+        {% else %}
+            <a href="{% url 'accounts:user_wallet' %}"><li>Wallet</li></a>
+            <a href=""><li>Profile</li></a>
+            <a href="{% url 'accounts:user_inbox' %}"><li>Inbox</li></a>
+            <a href="{% url 'accounts:user_borrowed_books' %}"><li>Books</li></a>
+            <a href="{% url 'accounts:sign_out' %}"><li class="unauthenticated-navbar-last-child" ><span>Sign out</span></li></a>
+        {% endif %}
+
+
+    </ul>
+
+
+
+</div>
