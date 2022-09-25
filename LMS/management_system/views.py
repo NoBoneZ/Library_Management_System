@@ -1,18 +1,64 @@
 import datetime
+import io
 
 from django.shortcuts import render, reverse
 from django.db.models import Q, Count
 from django.contrib import messages
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, FileResponse
 from django.views.generic import DetailView, View, ListView
 import requests
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
 
 from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn
 from .forms import BookForm, RenewalRequestForm, ImportDataViaApiForm
-from accounts.models import User, Inbox, Wallet
+from accounts.models import User, Inbox, Wallet, WalletTransaction
 
 
 # Create your views here.
+def popular_books():
+    times_borrowed_list = [ind_book.times_borrowed() for ind_book in Book.active_objects.all()]
+    times_borrowed_list.sort(reverse=True)
+    return [pop_book for pop_book in Book.active_objects.all()
+            if pop_book.times_borrowed() in times_borrowed_list[:10]][:10]
+
+
+def high_paying_customers():
+    sum_of_debit = [high_pay.sum_of_debit() for high_pay in Wallet.objects.all()]
+    sum_of_debit.sort(reverse=True)
+    return [customers for customers in Wallet.objects.all()
+            if customers.sum_of_debit() in sum_of_debit[:10]][:10]
+
+
+def report_to_pdf(header: str, object_list: []):
+    buf = io.BytesIO()
+    c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
+    textob = c.beginText()
+    textob.setTextOrigin(inch, inch)
+    textob.setFont("Helvetica", 12)
+
+    pdf_list = []
+    pdf_list.insert(0, header)
+
+    for obj in object_list:
+        pdf_list.append(obj)
+
+    for number, lines in enumerate(pdf_list):
+        if number == 0:
+            textob.textLines(lines)
+            textob.textLines("+++++++++++++++")
+            textob.textLines("  ")
+            continue
+        textob.textLines(str(lines))
+        textob.textLines("  ")
+
+    c.drawText(textob)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+
+    return buf
 
 
 def home(request):
@@ -25,11 +71,17 @@ def home(request):
     book_checker = list(BookRequest.not_answered_objects.filter(name_id=request.user.id))
     book_checker += list(BorrowedBook.not_returned_objects.filter(borrower_id=request.user.id))
 
+    date__ = int(str(((BorrowedBook.active_objects.get(id=2).date_to_be_returned - datetime.datetime.now().date()) // 9))[:2])
+    print(date__)
+
+
+
     context = {
         "genres": Genre.objects.all(),
         "books": list_of_books,
         "user_book_request": [book_request.book_id
                               for book_request in book_checker] if request.user.is_authenticated else [],
+        "popular_books": popular_books(),
 
     }
     return render(request, "management_system/home.html", context)
@@ -147,6 +199,8 @@ class LibrarianBookRequestView(ListView):
         context["book_requests"] = self.get_queryset()
         context["unpicked_books"] = BorrowedBook.active_objects.filter(is_picked=False, is_returned=False)
         context["book_returns"] = BookReturn.active_objects.all()
+        context["all_members"] = User.active_objects.all()
+        context["suspended_members"] = User.inactive_objects.all()
         return context
 
 
@@ -255,7 +309,7 @@ def approve_book_return(request, pk):
     try:
         book_return = BookReturn.active_objects.get(id=pk)
     except BookReturn.DoesNotExist:
-        messages.error(request, "Error, Kindly contact the Librarian !")
+        messages.error(request, "Error, Kindly contact the Administrator !")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     book_return.is_active = False
@@ -265,17 +319,41 @@ def approve_book_return(request, pk):
     try:
         borrowed_book = BorrowedBook.active_objects.get(id=book_return.borrowed_book_id)
     except BorrowedBook.DoesNotExist:
-        messages.error(request, "Error, Kindly contact the Librarian !")
+        messages.error(request, "Error, Kindly contact the Administrator !")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     borrowed_book.is_active = False
     borrowed_book.is_returned = True
     borrowed_book.save()
 
+    try:
+        user_wallet = Wallet.objects.get(owner_id=book_return.borrowed_book.borrower_id)
+    except:
+        messages.error(request, "Wallet Not Found, Contact Admin")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    if user_wallet.balance < 5:
+        user_wallet.outstanding_debts += 5
+        user_wallet.save()
+    else:
+        user_wallet.balance -= 5
+        user_wallet.save()
+
+    user_wallet_transaction = WalletTransaction.objects.create(
+        wallet=user_wallet,
+        transaction_type="Debit",
+        description=f"Fee on the return of {borrowed_book.book}",
+        amount=5,
+        balance=user_wallet.balance,
+        outstanding_debts=user_wallet.outstanding_debts,
+
+    )
+    user_wallet_transaction.save()
+
     user_message = Inbox.objects.create(
         receiver=User.active_objects.get(id=book_return.borrowed_book.borrower_id),
         sender="The library",
-        message=f"Your book return has been approved, thank you"
+        message=f"Your book return has been approved, You have been charged the standard Rs.5 .Thank you"
 
     )
     user_message.save()
@@ -314,18 +392,10 @@ class ReportView(ListView):
         return Book.active_objects.all()
 
     def get_context_data(self, **kwargs):
-        times_borrowed_list = [ind_book.times_borrowed() for ind_book in self.get_queryset()]
-        sum_of_debit = [high_pay.sum_of_debit() for high_pay in Wallet.objects.all()]
-
-        times_borrowed_list.sort()
-        sum_of_debit.sort()
-
         context = super(ReportView, self).get_context_data(**kwargs)
         context["all_books"] = self.get_queryset()
-        context["popular_books"] = [pop_book for pop_book in self.get_queryset()
-                                    if pop_book.times_borrowed() in times_borrowed_list[:10]]
-        context["high_paying_customers"] = [customers for customers in Wallet.objects.all()
-                                            if customers.sum_of_debit() in sum_of_debit[:10]]
+        context["popular_books"] = popular_books()
+        context["high_paying_customers"] = high_paying_customers()
         return context
 
 
@@ -369,3 +439,32 @@ class ImportDataViaApiView(View):
                     continue
             messages.success(request, f"{number_of_books} Books added successfully")
             return HttpResponseRedirect(reverse("management_system:home"))
+
+
+def high_paying_customer_pdf(request):
+    header = "List of High Paying Customers."
+    the_pdf = report_to_pdf(header, high_paying_customers())
+    return FileResponse(the_pdf, as_attachment=True, filename="High_paying_customers.pdf")
+
+
+def popular_books_pdf(request):
+    header = "List Of Popular Books."
+    the_pdf = report_to_pdf(header, popular_books())
+    return FileResponse(the_pdf, as_attachment=True, filename="Popular_Books.pdf")
+
+
+def suspend_unsuspend_member(request, pk):
+    try:
+        chosen_member = User.objects.get(id=pk)
+    except User.DoesNotExist:
+        messages.error(request, "Error! , contact the Admin")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    chosen_member.is_active = not chosen_member.is_active
+    chosen_member.save()
+    messages.success(request, "User action Taken Successfully")
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+def test_(request):
+    return render(request, "403.html")

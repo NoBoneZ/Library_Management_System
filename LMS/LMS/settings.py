@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "management_system",
     "phonenumber_field",
     "crispy_forms",
+    "djangobower"
 ]
 
 MIDDLEWARE = [

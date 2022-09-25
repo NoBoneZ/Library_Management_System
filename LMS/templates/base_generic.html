@@ -1,8 +1,12 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+<!--    <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">-->
     {% block title %}
     <title>Title</title>
     {% endblock %}
@@ -10,18 +14,69 @@
 <body>
 
 <style>
-    #messages li{
+    .messages li{
         list-style-type: none;
+        z-index:1000
+        position:relative;
+        top:0;
+        padding:5px;
+        margin-top:-16px;
+        font-size:13px;
+        font-family:sora;
+        color:white;
+    }
+
+    .messages--error{
+        background-color:red;
+    }
+
+    .messages--success{
+        background-color:green;
+
+    }
+
+    .messages--info{
+        background-color:blue;
     }
 </style>
 
+<!--{% if messages %}-->
+<!--<ul>-->
+<!--    {% for message in messages %}-->
+<!--    <li-->
+<!--     {% if messages.tags == "error" %}-->
+<!--            class="messages&#45;&#45;error"-->
+<!--        {% elif messages.tags == "success" %}-->
+<!--            class="messages&#45;&#45;success"-->
+<!--        {% elif messages.tags == "info" %}-->
+<!--            class="messages&#45;&#45;info"-->
+<!--        {% endif %}>-->
+<!--    {{message}}</li>-->
+<!--    {% endfor %}-->
+<!--</ul>-->
+<!--{% endif %}-->
+
+
+
 {% if messages %}
-<ul id="messages">
+<ul class="messages">
     {% for message in messages %}
-    <li>{{message}}</li>
+    <li {% if message.tags == 'error' %}
+        class="messages--error"
+        {% elif message.tags == 'success' %}
+        class="messages--success"
+        {% elif message.tags == 'info' %}
+        class="messages--info"
+
+        {% endif %}>
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Error: {% endif %}
+        {{ message }}
+    </li>
     {% endfor %}
 </ul>
 {% endif %}
+
+
 
 {% block content %}
 {% endblock %}

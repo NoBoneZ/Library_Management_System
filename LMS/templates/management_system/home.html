@@ -43,6 +43,11 @@
     width: 1250px;
   }
 
+  .books--grid h2{
+    margin-left:10px;
+    margin-top:70px;
+  }
+
 
   .library--status{
     height: 105px;
@@ -68,10 +73,6 @@
   .library--status img{
      height: 12px;
      width: 12px;
-
-
-
-
   }
 
   .library--status p{
@@ -130,7 +131,7 @@
    .library--search button{
       height:30px;
       float: right;
-      margin: -35px 90px 0px 0px;
+      margin: -40px 90px 0px 0px;
       background-color: #790417;
       color: #FFFFFF;
       padding:5px;
@@ -140,6 +141,7 @@
       top: 610px;
       left:970px;
       z-index: 1000;
+      cursor:pointer;
   }
 
 
@@ -210,14 +212,13 @@
      display:grid;
      grid-template-columns:0.5fr 0.5fr 0.5fr 0.5fr 0.5fr;
      column-gap: 5px;
-     row-gap:5px;
+     row-gap:20px;
   }
 
 
   .book--container{
      height: 300px;
      width:215px;
-     border:1px solid red;
      border-radius: 10px;
      padding:5px;
   }
@@ -227,6 +228,7 @@
       height:200px;
       width:200px;
       padding:10px;
+      border-radius:25px;
    }
 
 
@@ -243,13 +245,14 @@
    }
 
    .book--container button{
-      margin-left:37px;
+      margin-left:7px;
       margin-bottom:3px;
       background-color: #FD5252;
       height: 26px;
-      width: 150px;
+      width: 200px;
       border:1px solid #FD5252;
       border-radius:5px;
+      cursor:pointer;
    }
 
    .home--profile--section{
@@ -291,7 +294,7 @@
 
     .home--profile--section button{
       height: 40px;
-      width: 192px;
+      width: 190px;
       border-radius: 10px;
       padding: 16px 56px 16px 56px;
       background-color:#2A639C;
@@ -337,8 +340,12 @@
         <a href="{% url 'management_system:add_book' %}">Add Book</a>
           <a href="{% url 'management_system:library_report'%}">Report</a>
         <a href="{% url 'management_system:import_data'%}">import data</a>
+         <a href="{% url 'management_system:report_pdf'%}" target="_blank">pdf</a>
+        <a href="{% url 'accounts:books_calendar' %}">book calendar</a>
 
-  </div>
+        <a href="{% url 'management_system:test' %}">test</a>
+
+      </div>
 
 
     <div class="home--profile--section">
@@ -383,7 +390,7 @@
       <img src="{% static 'images/img_2.png' %}" alt="Now Open">
       <p>Open Now</p>
       {% else %}
-      <img src="{% static 'images/img_2.png' %}" alt="Now Open">
+      <img src="{% static 'images/img_2.png' %}" alt="Currently Closed">
       <p>Currently Closed</p>
       {% endif %}
     </div>
@@ -427,9 +434,33 @@
 
     <div class="super--books--container">
           {% for book in books %}
+            {% if book.quantity_available > 0 %}
+              <div class="book--container">
+            <img src="{% static 'images/image 17.png' %}" alt="{{book}}">
+            <p>{{book.title|truncatechars:20}}</p>
+<!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
+<!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
+
+            {% if book.bookID not in user_book_request %}
+            <a href="{% url 'management_system:book_request' book.bookID %}"><button>Make Book Request</button></a>
+            {% endif %}
+          </div>
+            {% endif %}
+          {% empty %}
+              <div class="book--container">
+            <p>No Book available at the moment</p>
+          </div>
+          {% endfor %}
+    </div>
+
+
+    <h2>Popular Books ({{popular_books.count}}) </h2>
+
+    <div class="super--books--container">
+          {% for book in popular_books %}
           <div class="book--container">
             <img src="{% static 'images/image 17.png' %}" alt="{{book}}">
-            <p>{{book}}</p>
+            <p>{{book.title|truncatechars:20}}</p>
 <!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
 <!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
 

@@ -14,9 +14,13 @@ from .views import (home,
                     approve_book_return,
                     reject_book_return,
                     ReportView,
-                    ImportDataViaApiView
+                    ImportDataViaApiView,
+                    report_to_pdf,
+                    suspend_unsuspend_member,
+                    test_,
+                    high_paying_customer_pdf,
+                    popular_books_pdf
                     )
-
 
 app_name = 'management_system'
 
@@ -40,7 +44,15 @@ urlpatterns = [
     path("reject_book_return/<int:pk>", reject_book_return, name="reject_book_return"),
 
     path("library_report/", ReportView.as_view(), name="library_report"),
-    path("import_books_via_api/", ImportDataViaApiView.as_view(), name="import_data"),
 
+    path("report_pdf/", report_to_pdf, name="report_pdf"),
+
+    path("import_books_via_api/", ImportDataViaApiView.as_view(), name="import_data"),
+    path("suspend_member/<int:pk>/", suspend_unsuspend_member, name="suspend_unsuspend_member"),
+
+    path("403/", test_, name='test'),
+
+    path("high_paying_customers_pdf/", high_paying_customer_pdf, name="high_paying_customers_pdf"),
+    path("popular_books_pdf/", popular_books_pdf, name="popular_books_pdf")
 
 ]

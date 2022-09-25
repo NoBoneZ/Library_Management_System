@@ -37,5 +37,36 @@
     {% endfor %}
   </ul>
 
+  <h3>Members</h3>
+  <ul>
+    {% for member in all_members %}
+    <li>{{member.username}}</li>
+    <a href="{% url 'management_system:suspend_unsuspend_member' member.id %}">Suspend</a>
+    {% empty %}
+    <li>No Members Yet</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Suspended Members</h3>
+  <ul>
+    {% for member in suspended_members %}
+    <li>{{member.username}}</li>
+    <a href="{% url 'management_system:suspend_unsuspend_member' member.id %}">Unsuspend</a>
+    {% empty %}
+    <li>No suspended members Yet</li>
+    {% endfor %}
+  </ul>
+
+  <h3>Book Default(elasped 100 days)</h3>
+  <ul>
+    {% for member in bad_default_members %}
+    <li>{{member.username}}</li>
+    <a href="{% url 'management_system:suspend_unsuspend_member' member.id %}">Suspend</a>
+    {% empty %}
+    <li>No suspended members Yet</li>
+    {% endfor %}
+  </ul>
+
+
 </div>
 {% endblock %}

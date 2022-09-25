@@ -64,6 +64,7 @@
 
 
     </tbody>
+    <a href="{% url 'management_system:popular_books_pdf' %}"><button type="submit"> Download Popular Books Pdf</button></a>
 </table>
 
 <br>
@@ -77,6 +78,7 @@
             <th>Name</th>
             <th>Wallet ID</th>
             <th>Amount Spent</th>
+            <th>Current Balance</th>
         </tr>
     </thead>
 
@@ -88,6 +90,7 @@
                 <td>{{customer.owner.username}}</td>
                 <td>{{customer.wallet_number}}</td>
                 <td>{{customer.sum_of_debit}}</td>
+                <td>{{customer.balance}}</td>
             </tr>
             {% empty %}
             <td colspan="4">No User fits this description</td>
@@ -95,5 +98,54 @@
 
 
     </tbody>
+    <a href="{% url 'management_system:high_paying_customers_pdf' %}"><button type="submit"> Download High Paying Customer Pdf</button></a>
 </table>
+
+<canvas id="myChart" width="400" height="100">Hello</canvas>
 {% endblock %}
+
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script>
+console.log("got here")
+$(document).ready(function(){
+        var ctx = document.getElementById('myChart').getContext('2d');
+        console.log("got here")
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [{% for customer in high_paying_customers %}'{{customer.owner.username}}', {%endfor%}] ,
+                console.log("got here")
+                datasets: [{
+                    label: 'Customers',
+                    data: [{% for customer in high_paying_customers %}'{{customer.owner.username}}', {%endfor%}],
+                    console.log("got here")
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+});
+    });
+</script>

@@ -82,6 +82,9 @@ class Wallet(models.Model):
                                             max_digits=5, default=0.00,
                                             validators=[MaxValueValidator(500.0)])
 
+    def __str__(self):
+        return f"{self.owner.username} ---- {self.wallet_number}"
+
     def save(self, *args, **kwargs):
         self.pin = int("".join(sample(digits, 4)))
         return super().save(*args, **kwargs)
@@ -103,10 +106,18 @@ class WalletTransaction(models.Model):
                                  max_digits=30, validators=[MinValueValidator(0.1)])
     date_occurred = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
+    balance = models.DecimalField(null=True, decimal_places=2,
+                                  max_digits=30, validators=[MinValueValidator(0.1)])
+    outstanding_debts = models.DecimalField(null=True, blank=True, decimal_places=2,
+                                            max_digits=5, default=0.00,
+                                            validators=[MaxValueValidator(500.0)])
 
     objects = models.Manager()
     active_objects = ActiveManager()
     inactive_objects = InActiveManager()
+
+    class Meta:
+        ordering = ("-date_occurred",)
 
 
 class Inbox(models.Model):

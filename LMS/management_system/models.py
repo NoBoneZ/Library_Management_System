@@ -76,7 +76,7 @@ class Book(models.Model):
     ratings_count = models.IntegerField(null=True, default=0, validators=[MinValueValidator(0)])
     language_code = models.CharField(max_length=7, null=True)
     num_of_pages = models.IntegerField(validators=[MinValueValidator(1)], null=True)
-    publisher = models.CharField(max_length=500, null=True, blank=True)
+    publisher = models.CharField(max_length=500, null=True, blank=True, default="No Publisher")
     publication_date = models.DateField(null=True, blank=True)
     quantity = models.IntegerField(default=1, validators=[MinValueValidator(1)])
     date_added = models.DateTimeField(auto_now_add=True)
@@ -90,6 +90,7 @@ class Book(models.Model):
         verbose_name = "Book"
         verbose_name_plural = "Books"
         ordering = ("-bookID",)
+        unique_together = ("title", 'isbn', 'isbn13')
 
     def __str__(self):
         return self.title
@@ -98,7 +99,7 @@ class Book(models.Model):
         return BorrowedBook.active_objects.filter(book_id=self.bookID, is_picked=True).count()
 
     def quantity_available(self):
-        return self.quantity - BorrowedBook.active_objects.filter(book_id=self.bookID, is_picked=True).count()
+        return int(self.quantity - BorrowedBook.active_objects.filter(book_id=self.bookID, is_picked=True).count())
 
     def times_borrowed(self):
         return BorrowedBook.objects.filter(book_id=self.bookID).count()
@@ -124,6 +125,8 @@ class BorrowedBook(models.Model):
     date_borrowed = models.DateTimeField(auto_now_add=True)
     date_to_be_returned = models.DateField(null=True)
     date_returned = models.DateField(null=True, blank=True)
+    debt_incurred_default = models.DecimalField(null=True, blank=True, decimal_places=2,
+                                                max_digits=5, default=0.00,)
     is_picked = models.BooleanField(default=False)
     is_returned = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -160,4 +163,3 @@ class BookReturn(models.Model):
 
     def __str__(self):
         return self.borrowed_book.book.title
-

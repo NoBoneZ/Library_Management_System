@@ -1,0 +1,47 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+{% block content %}
+
+<html>
+  <head>
+    <meta charset='utf-8' />
+    <link href='{% static "scripts/fullcalendar/lib/main.css" %}' rel='stylesheet' />
+    <script src='{% static "scripts/fullcalendar/lib/main.js" %}'></script>
+    <script>
+
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          timeZone:'Africa/Lagos',
+          locale:'en',
+          firstDay:1,
+          events: [
+          {% for book in not_returned_books %}
+            {
+              title: '{{ book.book }}',
+              start: '{{ book.date_borrowed.isoformat }}',
+              end:'{{ book.date_to_be_returned.isoformat }}',
+            },
+          {% endfor %}
+          ]
+
+        });
+
+        calendar.render();
+      });
+
+    </script>
+  </head>
+
+
+  <body>
+<!--  {%for event in group_events%}-->
+<!--  <h4>{{event.time_start}}</h4>-->
+<!--  {%endfor%}-->
+    <div id='calendar'></div>
+  </body>
+
+</html>
+{% endblock %}

@@ -5,7 +5,8 @@ from .views import (sign_up,
                     UserInboxView,
                     UserBorrowedBooksView,
                     sign_out,
-                    wallet_view
+                    wallet_view,
+                    books_calendar_view
                     )
 
 app_name = "accounts"
@@ -16,6 +17,7 @@ urlpatterns = [
     path("sign-out/", sign_out, name="sign_out"),
     path("inbox/", UserInboxView.as_view(), name="user_inbox"),
     path("borrowed_books/", UserBorrowedBooksView.as_view(), name="user_borrowed_books"),
-    path("wallet/", wallet_view, name="user_wallet")
+    path("wallet/", wallet_view, name="user_wallet"),
+    path("book_calendar/", books_calendar_view, name="books_calendar")
 
 ]

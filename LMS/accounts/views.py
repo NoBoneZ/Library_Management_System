@@ -122,3 +122,8 @@ def wallet_view(request):
         return HttpResponseRedirect(reverse("management_system:home"))
 
     return render(request, "accounts/user_wallet.html", {"form": WalletPinForm()})
+
+
+def books_calendar_view(request):
+    not_returned_books = BorrowedBook.not_returned_objects.filter(borrower_id=request.user.id)
+    return render(request, "accounts/user_book_calendar.html", {"not_returned_books": not_returned_books})
