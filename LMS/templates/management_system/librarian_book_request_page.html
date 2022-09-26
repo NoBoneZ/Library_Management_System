@@ -41,9 +41,23 @@
   <ul>
     {% for member in all_members %}
     <li>{{member.username}}</li>
-    <a href="{% url 'management_system:suspend_unsuspend_member' member.id %}">Suspend</a>
+    <a href="{% url 'management_system:suspend_unsuspend_member' member.username %}">Suspend</a>
     {% empty %}
     <li>No Members Yet</li>
+    {% endfor %}
+  </ul>
+
+
+  <h3>Renewal Request</h3>
+  <ul>
+    {% for renewal_request in renewal_requests %}
+    <li>{{renewal_request.borrowed_book.borrower.username}} wants to extend the lending period of
+      {{renewal_request.borrowed_book.book}} by {{renewal_request.renewal_days}} days,
+      book to now be returned on {{renewal_request.new_date_of_return}}, formerly {{renewal_request.borrowed_book.date_to_be_returned}} </li>
+    <a href="{% url 'management_system:accept_renewal' renewal_request.id %}">Accept</a>
+     <a href="{% url 'management_system:reject_renewal' renewal_request.id %}">Reject</a>
+    {% empty %}
+    <li>No Renewal Request Yet</li>
     {% endfor %}
   </ul>
 
@@ -51,7 +65,7 @@
   <ul>
     {% for member in suspended_members %}
     <li>{{member.username}}</li>
-    <a href="{% url 'management_system:suspend_unsuspend_member' member.id %}">Unsuspend</a>
+    <a href="{% url 'management_system:suspend_unsuspend_member' member.username %}">Unsuspend</a>
     {% empty %}
     <li>No suspended members Yet</li>
     {% endfor %}
@@ -61,9 +75,9 @@
   <ul>
     {% for member in bad_default_members %}
     <li>{{member.username}}</li>
-    <a href="{% url 'management_system:suspend_unsuspend_member' member.id %}">Suspend</a>
+    <a href="{% url 'management_system:suspend_unsuspend_member' member.username %}">Suspend</a>
     {% empty %}
-    <li>No suspended members Yet</li>
+    <li>No such members Yet</li>
     {% endfor %}
   </ul>
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from django.shortcuts import render, reverse
 from django.http import HttpResponseRedirect
@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, login, logout, authenticate
 from django.views.generic import ListView
 
-from .forms import CustomUserCreationForm, WalletPinForm
+from .forms import CustomUserCreationForm, WalletPinForm, RenewalRequestForm
 from .models import User, Inbox, Wallet
 from management_system.models import BorrowedBook
 
@@ -102,7 +102,7 @@ class UserBorrowedBooksView(ListView):
                                                                 is_active=True, is_picked=False)
         context["default_books"] = BorrowedBook.not_returned_objects.filter(borrower_id=self.request.user.id,
                                                                             is_picked=True,
-                                                                            date_to_be_returned__lte=datetime.today().date())
+                                                                            date_to_be_returned__lte=datetime.datetime.today().date())
         return context
 
 
@@ -127,3 +127,30 @@ def wallet_view(request):
 def books_calendar_view(request):
     not_returned_books = BorrowedBook.not_returned_objects.filter(borrower_id=request.user.id)
     return render(request, "accounts/user_book_calendar.html", {"not_returned_books": not_returned_books})
+
+
+def make_renewal_request(request, pk):
+    try:
+        borrowed_book = BorrowedBook.not_returned_objects.get(id=pk, is_returned=False)
+    except BorrowedBook.DoesNotExist:
+        messages.error(request, "Book Does Not Exist !")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    if request.method == "POST":
+        if int(request.POST.get("renewal_days")) > 21 or int(request.POST.get("renewal_days")) < 1:
+            messages.error(request, "New date can not be more than 21 days or less than 1 day !")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        form = RenewalRequestForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            renewal = form.save(commit=False)
+            renewal.borrowed_book = borrowed_book
+            renewal.new_date_of_return = borrowed_book.date_to_be_returned + datetime.timedelta(days=form.cleaned_data.get("renewal_days"))
+            renewal.save()
+
+            messages.success(request, "renewal request sent successfully, Kindly check your inbox for updates")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        error = (form.errors.as_text()).split("*")
+        messages.error(request, error[len(error) - 1])
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    return render(request, "management_system/add_book.html", {"form": RenewalRequestForm()})

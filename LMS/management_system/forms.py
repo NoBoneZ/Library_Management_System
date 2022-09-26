@@ -1,18 +1,12 @@
 from django import forms
 
-from .models import Book, RenewalRequest
+from .models import Book
 
 
 class BookForm(forms.ModelForm):
     class Meta:
         model = Book
         exclude = ("bookID", "date_added", "is_active")
-
-
-class RenewalRequestForm(forms.ModelForm):
-    class Meta:
-        model = RenewalRequest
-        fields = ("renewal_date",)
 
 
 class ImportDataViaApiForm(forms.Form):

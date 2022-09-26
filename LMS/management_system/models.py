@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from accounts.models import User
 
@@ -143,8 +143,10 @@ class BorrowedBook(models.Model):
 
 class RenewalRequest(models.Model):
     borrowed_book = models.ForeignKey(BorrowedBook, on_delete=models.SET_NULL, null=True)
-    renewal_date = models.DateField(null=True)
+    renewal_days = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(21)])
+    new_date_of_return = models.DateField(null=True)
     date_applied = models.DateField(auto_now_add=True)
+    is_approved = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     objects = models.Manager()

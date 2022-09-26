@@ -11,8 +11,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
-from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn
-from .forms import BookForm, RenewalRequestForm, ImportDataViaApiForm
+from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn, RenewalRequest
+from .forms import BookForm, ImportDataViaApiForm
 from accounts.models import User, Inbox, Wallet, WalletTransaction
 
 
@@ -71,17 +71,22 @@ def home(request):
     book_checker = list(BookRequest.not_answered_objects.filter(name_id=request.user.id))
     book_checker += list(BorrowedBook.not_returned_objects.filter(borrower_id=request.user.id))
 
-    date__ = int(str(((BorrowedBook.active_objects.get(id=2).date_to_be_returned - datetime.datetime.now().date()) // 9))[:2])
-    print(date__)
-
-
+    # open_time = datetime.time(9, 00, 0)
+    # close_time = datetime.time(20, 00, 00)
+    # if open_time <= datetime.datetime.now().time() <= close_time:
+    #     is_open = True
+    # else:
+    #     is_open = False
 
     context = {
         "genres": Genre.objects.all(),
         "books": list_of_books,
         "user_book_request": [book_request.book_id
                               for book_request in book_checker] if request.user.is_authenticated else [],
-        "popular_books": popular_books(),
+        "popular_books": popular_books()[:5],
+        # "open_time": open_time,
+        # 'close_time': close_time,
+        # "is_open": is_open,
 
     }
     return render(request, "management_system/home.html", context)
@@ -195,12 +200,16 @@ class LibrarianBookRequestView(ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(LibrarianBookRequestView, self).get_context_data(*args, **kwargs)
-        print(BookReturn.objects.all())
+        bad_default_books = BorrowedBook.not_returned_objects.filter(debt_incurred_default__gte=500).values_list(
+            'borrower_id')
+
+        context["bad_default_members"] = User.active_objects.filter(pk__in=bad_default_books)
         context["book_requests"] = self.get_queryset()
         context["unpicked_books"] = BorrowedBook.active_objects.filter(is_picked=False, is_returned=False)
         context["book_returns"] = BookReturn.active_objects.all()
         context["all_members"] = User.active_objects.all()
         context["suspended_members"] = User.inactive_objects.all()
+        context["renewal_requests"] = RenewalRequest.active_objects.all()
         return context
 
 
@@ -259,32 +268,6 @@ class RejectBookRequestView(View):
         book_request.save()
         messages.success(request, "Book request Rejected Successfully !")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-
-
-def make_renewal_request(request, pk):
-    try:
-        borrowed_book = BorrowedBook.active_objects.get(id=pk, is_returned=False)
-    except BorrowedBook.DoesNotExist:
-        messages.error(request, "Book Does Not Exist !")
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-
-    if request.method == "POST":
-        if request.POST.get("renewal_date") >= datetime.datetime.today().date() + datetime.timedelta(days=14):
-            messages.error(request, "New date can not be more than 40 days from today !")
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-        form = RenewalRequestForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            renewal = form.save(commit=False)
-            renewal.borrowed_book = borrowed_book
-            renewal.save()
-
-            messages.success(request, "renewal request sent successfully, Kindly check your inbox for updates")
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-        error = (form.errors.as_text()).split("*")
-        messages.error(request, error[len(error) - 1])
-        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-    return render(request, "management_system/add_book.html", {"form": RenewalRequestForm()})
 
 
 class MakeBookReturnsView(View):
@@ -453,9 +436,9 @@ def popular_books_pdf(request):
     return FileResponse(the_pdf, as_attachment=True, filename="Popular_Books.pdf")
 
 
-def suspend_unsuspend_member(request, pk):
+def suspend_unsuspend_member(request, username):
     try:
-        chosen_member = User.objects.get(id=pk)
+        chosen_member = User.objects.get(username=username)
     except User.DoesNotExist:
         messages.error(request, "Error! , contact the Admin")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
@@ -468,3 +451,62 @@ def suspend_unsuspend_member(request, pk):
 
 def test_(request):
     return render(request, "403.html")
+
+
+class AcceptRenewalRequestView(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            renewal_request = RenewalRequest.active_objects.get(id=kwargs["pk"])
+        except RenewalRequest.DoesNotExist:
+            messages.error(request, "Error! kindly contact the Admin")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+        try:
+            borrowed_book = BorrowedBook.not_returned_objects.get(id=renewal_request.borrowed_book_id)
+        except BorrowedBook.DoesNotExist:
+            messages.error(request, "Error! kindly contact the Admin")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+        borrowed_book.date_to_be_returned = borrowed_book.date_to_be_returned + datetime.timedelta(
+            days=renewal_request.renewal_days)
+        renewal_request.is_approved = True
+        renewal_request.is_active = True
+
+        user_message = Inbox.objects.create(
+            receiver=User.active_objects.get(id=borrowed_book.borrower_id),
+            sender="The library",
+            message=f"Your renewal request for {borrowed_book.book} has been approved !"
+
+        )
+
+        user_message.save()
+        borrowed_book.save()
+        renewal_request.save()
+
+        messages.success(request, "Renewal Accepted Successfully !")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+class RejectRenewalRequestView(View):
+    def get(self, request, *args, **kwargs):
+        try:
+            renewal_request = RenewalRequest.active_objects.get(id=kwargs["pk"])
+        except RenewalRequest.DoesNotExist:
+            messages.error(request, "Error! kindly contact the Admin")
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+        renewal_request.is_active = False
+        renewal_request.save()
+
+        user_message = Inbox.objects.create(
+            receiver=User.active_objects.get(id=renewal_request.borrowed_book.borrower_id),
+            sender="The library",
+            message=f"Your renewal request for {renewal_request.borrowed_book.book} has been Rejected!, "
+                    f"make the return on time to avoid being charged the default fee"
+
+        )
+
+        user_message.save()
+
+        messages.success(request, "Renewal Rejected Successfully !")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

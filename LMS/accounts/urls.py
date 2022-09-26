@@ -6,7 +6,8 @@ from .views import (sign_up,
                     UserBorrowedBooksView,
                     sign_out,
                     wallet_view,
-                    books_calendar_view
+                    books_calendar_view,
+                    make_renewal_request
                     )
 
 app_name = "accounts"
@@ -18,6 +19,7 @@ urlpatterns = [
     path("inbox/", UserInboxView.as_view(), name="user_inbox"),
     path("borrowed_books/", UserBorrowedBooksView.as_view(), name="user_borrowed_books"),
     path("wallet/", wallet_view, name="user_wallet"),
-    path("book_calendar/", books_calendar_view, name="books_calendar")
+    path("book_calendar/", books_calendar_view, name="books_calendar"),
+    path("make_renewal_request/<int:pk>", make_renewal_request, name="make_renewal"),
 
 ]

@@ -340,7 +340,6 @@
         <a href="{% url 'management_system:add_book' %}">Add Book</a>
           <a href="{% url 'management_system:library_report'%}">Report</a>
         <a href="{% url 'management_system:import_data'%}">import data</a>
-         <a href="{% url 'management_system:report_pdf'%}" target="_blank">pdf</a>
         <a href="{% url 'accounts:books_calendar' %}">book calendar</a>
 
         <a href="{% url 'management_system:test' %}">test</a>
@@ -454,7 +453,7 @@
     </div>
 
 
-    <h2>Popular Books ({{popular_books.count}}) </h2>
+    <h2>Popular Books </h2>
 
     <div class="super--books--container">
           {% for book in popular_books %}

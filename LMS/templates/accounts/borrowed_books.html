@@ -17,6 +17,7 @@
     {% for borrowed_book in borrowed_books %}
     <li>{{borrowed_book}} due on {{borrowed_book.date_to_be_returned}}</li>
     <a href="{% url 'management_system:make_book_return' borrowed_book.id %}">Make Book Return</a>
+    <a href="{% url 'accounts:make_renewal' borrowed_book.id %}">Make Renewal</a>
     {% empty %}
     <li>I'm Empty</li>
     {% endfor %}
