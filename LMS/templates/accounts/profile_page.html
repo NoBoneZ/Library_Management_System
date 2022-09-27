@@ -1,0 +1,505 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+{% block content %}
+<style>
+  .profile--page{
+       display:grid;
+       grid-template-columns:0.5fr 3fr;
+  }
+
+  .profile--pictures{
+        border-top:55px solid #F9FAFB;
+        border-bottom:65px solid #F9FAFB;
+        border-left:25px solid #F9FAFB;
+        border-right:25px solid #F9FAFB;
+        border-radius:8px;
+        height:1500px;
+  }
+
+
+  .reader--image{
+        width:1235px;
+        height: 180px;
+
+  }
+
+  .overlay--image{
+        width:1235px;
+        height: 180px;
+        position:absolute;
+        top:207px;
+        right:38px;
+        opacity:0.6;
+
+  }
+
+  .profile--picture{
+     height:120px;
+      width:120px;
+      border-radius: 50%;
+      border: 6px solid white;
+      margin-bottom:-10px;
+      position:absolute;
+      top:340px;
+      right:1050px;
+
+  }
+
+
+  .username--email{
+        width:200px;
+        margin-left:240px;
+        margin-top:-15px;
+
+
+  }
+
+  .username--email h3{
+        font-family: Mulish;
+        font-size: 19px;
+        font-weight: 700;
+        line-height: 36px;
+        letter-spacing: 0px;
+        text-align: left;
+        color:#54565B;
+
+  }
+
+  .username--email p{
+    font-family: Inter;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+
+
+  }
+
+  .reader--inscription{
+        color:white;
+        font-family: The Jacklyn;
+        font-size: 70px;
+        font-weight: 200;
+        line-height: 36px;
+        text-align: center;
+        height: 8.94117736816406px;
+        position:absolute;
+        left: 1240px;
+        top: 212px;
+        margin-top:60;
+  }
+
+  .profile--details{
+       border-top:50px solid #F9FAFB;
+       border-bottom: 50px solid #F9FAFB;
+       border-left: 50px solid #F9FAFB;
+       border-right:50px solid #F9FAFB;
+       border-radius:8px;
+       height:1050px;
+       margin:50px 20px 0px 20px;
+       padding:30px;
+  }
+
+   .tab{
+       margin-top:-65px;
+       margin-right:180px;
+       cursor:pointer;
+  }
+
+
+  .tablinks{
+       display:inline;
+       margin:0px 60px -40px 80px ;
+       font-family:mullish;
+       height: 37px;
+      width: 46px;
+      left: 85.552734375px;
+      top: 34.4705810546875px;
+      border-radius: nullpx;
+
+  }
+
+  .tablinks:hover{
+      transition: top 0ms ease-in-out 0ms;
+      color:#2E5185;
+  }
+
+
+  #edit_profile form{
+      margin-top:30px;
+
+  }
+
+  #edit_profile label{
+       margin-left:7px;
+
+  }
+
+  #edit_profile input[type=text],
+  #edit_profile input[type=tel],
+  #edit_profile input[type=number],
+  #edit_profile select{
+       border-radius:15px;
+       height:50px;
+       width: 950px;
+       margin-bottom:30px;
+       background-color:hsla(0, 0%, 92%, 1);
+       margin-top:10px;
+       padding:3px;
+
+  }
+
+      #edit_profile input[type=submit]{
+            border:1px solid #2A639C;
+            background:#2A639C;
+            margin-top:5px;
+            height: 38px;
+            width: 330px;
+            border-radius: 8px;
+            color:white;
+            margin-left:250px;
+            cursor:pointer;
+      }
+
+
+     #inbox li{
+         list-style-type:none;
+     }
+
+     #inbox ul{
+         margin-top:30px;
+     }
+
+     .dropdown{
+         float:right;
+         margin-right:20px;
+     }
+
+     .ind_message{
+        margin: 10px 0px 0px 0px;
+        padding:10px;
+
+     }
+
+     .ind_message:nth-child(odd){
+        background-color:#F5F3F3;
+
+     }
+
+     #transaction button{
+         margin:80px 0px -30px 595px;
+         background-color: #2A639C;
+         color:white;
+         border-radius:10px;
+         width: 222.35px;
+         height: 47.2px;
+         cursor:pointer;
+         border: 1px solid #2A639C;
+
+     }
+
+      #transaction a{
+         text-decoration:none;
+         color:white;
+
+     }
+
+
+     #transaction table{
+        margin-top:30px;
+        border-radius:10px;
+        border-collapse:collapse;
+        width:95%;
+        margin-top:100px;
+     }
+
+     #transaction td, th{
+           padding:10px;
+     }
+
+     #transaction thead{
+        background-color:hsla(0, 0%, 92%, 1);
+        border-radius: 10px;
+     }
+
+     #transaction td{
+        margin-top:30px;
+         text-align:center;
+
+     }
+
+
+    #transaction tr{
+        border-bottom: 1px solid gainsboro;
+    }
+
+    .transaction_summary{
+        display:grid;
+        grid-template-columns:1.5fr 1.5fr;
+        margin-bottom:-30px;
+
+    }
+
+      .outstanding_debts, .total_balance{
+        margin:35px 0px 0px 0px;
+        border: 1px solis hsla(210, 20%, 98%, 1);
+        border-radius:10px;
+        background-color: hsla(210, 20%, 98%, 1);
+        width:300px;
+        height:200px;
+    }
+
+    .outstanding_debts h3, .total_balance h3{
+        padding:10px;
+        font-family: Mulish;
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 36px;
+        text-align: left;
+        color:hsla(84, 3%, 62%, 1);
+
+    }
+
+
+    .outstanding_debts p, .total_balance p{
+            height: 25px;
+            width: 125px;
+            font-family: Inter;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 36px;
+            text-align: left;
+            padding:20px;
+
+
+
+
+    }
+
+
+
+</style>
+
+<div class="profile--page">
+
+    {% include "genre_component.html" %}
+
+    <div class="user--profile">
+
+      {% include "navbar.html" %}
+
+      <h2>{{request.user.username | title}}'s Profile</h2>
+
+      <div>
+
+        <div class="profile--pictures">
+          <img src="{% static 'images/img_4.png' %}" alt="reader_image" class="reader--image">
+
+            <img src="{% static 'images/img_6.png' %}" alt="reader_image" class="overlay--image">
+
+            <p class="reader--inscription">Reader</p>
+
+            <img src="{{member.profile_picture.url}}" alt="profile_picture" class="profile--picture">
+
+            <div class="username--email">
+                <h3 >{{member.username | title}}</h3>
+                <p  >{{member.email}}</p>
+            </div>
+
+
+            <div class="profile--details">
+
+                <div class="tab">
+                  <p class="tablinks" onclick="openCity(event, 'wallet')">Wallet</p>
+                  <p class="tablinks" onclick="openCity(event, 'edit_profile')">Edit Profile</p>
+                  <p class="tablinks" onclick="openCity(event, 'transaction')">Transaction</p>
+                  <p class="tablinks" onclick="openCity(event, 'inbox')">Inbox</p>
+
+                </div>
+
+
+
+                 <div id="wallet" class="tabcontent">
+
+                </div>
+
+                  <div id="edit_profile" class="tabcontent">
+                    <form action="" method="Post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <label>First Name</label>
+                      <br>
+                        {{form.first_name}}
+                        <br>
+                        <br>
+
+
+                        <label>Middle Name</label>
+                      <br>
+                        {{form.middle_name}}
+                        <br>
+                        <br>
+
+                        <label>Last Name</label>
+                      <br>
+                        {{form.last_name}}
+                        <br>
+                        <br>
+
+                        <label>Phone Number</label>
+                      <br>
+                        {{form.phone_number}}
+                        <br>
+                        <br>
+
+                        <label>Age</label>
+                      <br>
+                        {{form.age}}
+                        <br>
+                        <br>
+
+                        <label>Gender</label>
+                      <br>
+                        {{form.gender}}
+                        <br>
+                        <br>
+
+                        <label>Profile Picture</label>
+                      <br>
+                        {{form.profile_picture}}
+                        <br>
+                        <br>
+
+
+                        <input type="submit" value="Update Details">
+                    </form>
+                </div>
+
+                  <div id="inbox" class="tabcontent">
+                    <ul>
+                        {% for user_message in all_inbox %}
+                      <div class="ind_message">
+                          <li><pre>{{forloop.counter}}  <strong>{{user_message.sender}}</strong>  {{user_message.message | truncatechars:80}}   {{user_message.date_created}}  <img class="dropdown" src="{% static 'images/img_7.png' %}" alt="dropdown"></pre></li>
+                        </div>
+                        {% empty %}
+                        <li>I'm Empty</li>
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                <div id="transaction" class="tabcontent">
+
+                    <button type="submit"><a href="{% url 'accounts:transaction_report' %}" >Download Transaction CSV</a></button>
+
+
+                    <div class="transaction_summary">
+                        <div class="total_balance">
+                            <h3>Total Balance</h3>
+                            <p>Rs. {{user_wallet.balance}}</p>
+                        </div>
+
+
+                        <div class="outstanding_debts">
+                            <h3>Outstanding Debts</h3>
+                            <p>Rs. {{user_wallet.outstanding_debts}}</p>
+                        </div>
+                    </div>
+
+
+
+                 <table>
+                     <thead>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Trans Type</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Date</th>
+                            <th>Outstanding Debts</th>
+                            <th>Balance</th>
+                        </tr>
+
+                     </thead>
+
+                     <tbody>
+                     {% for transaction in all_transactions %}
+                     <tr>
+                         <td>{{forloop.counter}}</td>
+
+                         {% if transaction.transaction_type == "Debit" %}
+                            <td style="color:red">{{transaction.transaction_type}}</td>
+                         {% elif transaction.transaction_type == "Credit" %}
+                            <td style="color:green">{{transaction.transaction_type}}</td>
+                         {% endif %}
+
+                          <td>{{transaction.amount}}</td>
+                          <td>{{transaction.description | truncatechars:10}}</td>
+                          <td>{{transaction.date_occurred}}</td>
+                          <td>{{transaction.outstanding_debts}}</td>
+                          <td>{{transaction.balance}}</td>
+                     </tr>
+                     {% empty %}
+                     <tr><td>I'm Empty</td></tr>
+                     {% endfor %}
+
+                     </tbody>
+                 </table>
+
+                </div>
+
+
+
+            </div>
+
+
+        </div>
+
+
+        </div>
+
+        {% include 'footer.html' %}
+
+    </div>
+</div>
+
+
+<script>
+    function openCity(evt, cityName) {
+      var i, tabcontent, tablinks
+      tabcontent = document.getElementsByClassName('tabcontent')
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none'
+      }
+      tablinks = document.getElementsByClassName('tablinks')
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' active', '')
+      }
+      document.getElementById(cityName).style.display = 'block'
+      evt.currentTarget.className += ' active'
+    }
+  </script>
+
+{% endblock %}
+
+
+<!--  <script>-->
+<!--    function openCity(evt, cityName) {-->
+<!--      var i, tabcontent, tablinks-->
+<!--      tabcontent = document.getElementsByClassName('tabcontent')-->
+<!--      for (i = 0; i < tabcontent.length; i++) {-->
+<!--        tabcontent[i].style.display = 'none'-->
+<!--      }-->
+<!--      tablinks = document.getElementsByClassName('tablinks')-->
+<!--      for (i = 0; i < tablinks.length; i++) {-->
+<!--        tablinks[i].className = tablinks[i].className.replace(' active', '')-->
+<!--      }-->
+<!--      document.getElementById(cityName).style.display = 'block'-->
+<!--      evt.currentTarget.className += ' active'-->
+<!--    }-->
+<!--  </script>-->
+

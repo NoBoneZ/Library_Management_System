@@ -1,0 +1,165 @@
+{% load static %}
+
+<style>
+
+  .genre--grid h3{
+    font-family: Sora;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 29px;
+    letter-spacing: 1px;
+    text-align: left;
+    margin-top:55px;
+
+
+  }
+
+  .genre--grid li{
+    list-style-type:none;
+    margin-left:-10px;
+
+  }
+
+
+  .genre--grid a{
+    text-decoration:none;
+    color:#54565B;
+  }
+
+
+
+  .genre--grid a:visited{
+    text-decoration:none;
+    color:#54565B;
+  }
+
+
+  .genre--icon{
+    height: 16px;
+    width: 16px;
+    margin:0px 0px -20px -35px;
+  }
+
+  .home--profile--section{
+      position:absolute;
+      bottom:0;
+      margin-left:5px;
+
+   }
+
+   .home--profile--section img{
+      height:80px;
+      width:80px;
+      border-radius: 50%;
+      margin-bottom:-10px;
+
+
+
+   }
+
+   .home--profile--section h4{
+      font-family: Sora;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 29px;
+      text-align: left;
+      height: 11px;
+      width: 123.697265625px;
+   }
+
+   .home--profile--section p{
+      font-family: Sora;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 14px;
+      text-align: left;
+      color:#8B908B;
+
+   }
+
+    .home--profile--section button{
+      height: 40px;
+      width: 190px;
+      border-radius: 10px;
+      padding: 16px 56px 16px 56px;
+      background-color:#2A639C;
+      border: 1px solid #2A639C;
+      cursor:pointer;
+   }
+
+
+   .home--profile--section span{
+      color:white;
+      padding-bottom:9px;
+   }
+
+
+
+</style>
+
+
+<div class="genre--grid">
+    <h3>GENRE</h3>
+    <ul>
+      {% if genres %}
+      <a href="{% url 'management_system:home' %}">
+        <img src="{% static 'images/img.png'%}" alt="all" class="genre--icon">
+        <li>All Books</li>
+      </a>
+      {% endif %}
+
+      {% for genre in genres %}
+      <div class="ind_genre">
+        <a href="{% url 'management_system:home' %}?search={{genre}}">
+          <img src="{% static 'images/img.png'%}" alt="{{genre}}" class="genre--icon">
+          <li>{{genre}}</li>
+        </a>
+      </div>
+      {% empty %}
+      <li>No Genre At The Moment</li>
+      {% endfor %}
+    </ul>
+
+      <div>
+        <a href="{% url 'management_system:librarian_book_page' %}">Library request</a>
+      <br>
+      <br>
+        <a href="{% url 'management_system:add_book' %}">Add Book</a>
+          <a href="{% url 'management_system:library_report'%}">Report</a>
+        <a href="{% url 'management_system:import_data'%}">import data</a>
+        <a href="{% url 'accounts:books_calendar' %}">book calendar</a>
+
+        <a href="{% url 'management_system:test' %}">test</a>
+
+      </div>
+
+
+    <div class="home--profile--section">
+        {% if request.user.is_authenticated %}
+          <div class="profile">
+            <img src="{{member.profile_picture.url}}" alt="{{request.user.username}}">
+            <h4>{{request.user.username | title}}</h4>
+
+            {% if not request.user.is_staff %}
+            <p>Reader</p>
+            {% else %}
+            <p>Librarian</p>
+            {% endif %}
+
+            <a href="{% url 'accounts:profile_page'%}"><button type="submit"><span>Edit Profile</span></button></a>
+
+
+          </div>
+        {% else %}
+          <a href="#"><button type="submit"><span>Sign In</span></button></a>
+        {% endif %}
+
+
+
+      </div>
+
+
+
+
+
+  </div>

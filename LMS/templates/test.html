@@ -1,0 +1,152 @@
+{% extends 'base_generic.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+ #inbox{
+  position: relative;
+  display: inline-block;
+}
+
+.full_message {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown{
+border:1px solid red;
+float:right;
+}
+
+.dropdown:hover .full_message{
+    cursor:pointer;
+  display: block;
+}
+
+
+</style>
+
+
+
+
+
+    <div class="tab">
+      <button class="tablinks" onclick="openCity(event, 'inbox')">Inbox</button>
+      <button class="tablinks" onclick="openCity(event, 'edit_profile')">Edit Profile</button>
+      <button class="tablinks" onclick="openCity(event, 'transaction')">Transaction</button>
+      <button class="tablinks" onclick="openCity(event, 'wallet')">Wallet</button>
+      <button class="tablinks" onclick="openCity(event, 'Members')">Members</button>
+    </div>
+
+    <div id="inbox" class="tabcontent">
+        <ul>
+            {% for user_message in all_inbox %}
+            <li><pre>{{forloop.counter}}  <strong>{{user_message.sender}}</strong>  {{user_message.message | truncatechars:30}}   {{user_message.date_created}}  <img class="dropdown" src="{% static 'images/img_7.png' %}" alt="dropdown"></pre></li>
+            <div class="full_message">
+            <pre > {{user_message.sender}}  {{user_message.description}}</pre>
+            </div>
+            {% empty %}
+            <li>I'm Empty</li>
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+
+    <div id="edit_profile" class="tabcontent">
+        <form action="" method="Post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <label>First Name</label>
+            {{form.first_name}}
+
+            <label>Middle Name</label>
+            {{form.middle_name}}
+
+            <label>Last Name</label>
+            {{form.last_name}}
+
+            <label>Phone Numbe</label>
+            {{form.phone_number}}
+
+            <label>Age</label>
+            {{form.age}}
+
+            <label>Gender</label>
+            {{form.gender}}
+
+            <label>Profile Picture</label>
+            {{form.profile_picture}}
+
+
+            <input type="submmit" value="Update Details">
+        </form>
+    </div>
+
+
+    <div id="transaction" class="tabcontent">
+     <table>
+         <thead>
+            <tr>
+                <th>S/N</th>
+                <th>Trans Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Outstanding Debts</th>
+                <th>Balance</th>
+            </tr>
+
+         </thead>
+
+         <tbody>
+         {% for transaction in all_transactions %}
+         <tr>
+             <td>{{forloop.counter}}</td>
+              <td>{{transaction.transaction_type}}</td>
+              <td>{{transaction.amount}}</td>
+              <td>{{transaction.description | truncatechars:10}}</td>
+              <td>{{transaction.date_occurred}}</td>
+              <td>{{transaction.outstanding_debts}}</td>
+              <td>{{transaction.balance}}</td>
+         </tr>
+         {% empty %}
+         <tr><td>I'm Empty</td></tr>
+         {% endfor %}
+
+         </tbody>
+     </table>
+
+    </div>
+
+    <div id="wallet" class="tabcontent">
+
+    </div>
+
+
+
+
+
+
+  <script>
+    function openCity(evt, cityName) {
+      var i, tabcontent, tablinks
+      tabcontent = document.getElementsByClassName('tabcontent')
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none'
+      }
+      tablinks = document.getElementsByClassName('tablinks')
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' active', '')
+      }
+      document.getElementById(cityName).style.display = 'block'
+      evt.currentTarget.className += ' active'
+    }
+  </script>
+{% endblock %}

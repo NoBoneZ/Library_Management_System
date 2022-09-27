@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "management_system",
     "phonenumber_field",
     "crispy_forms",
-    "djangobower"
+    'payments',
+
 ]
 
 MIDDLEWARE = [
@@ -65,7 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                "management_system.context_processors.date_checker"
+                "management_system.context_processors.date_checker",
+                # "management_system.context_processors.default_book_checker"
             ],
         },
     },
@@ -77,13 +79,10 @@ WSGI_APPLICATION = 'LMS.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.psql',
-    #     'NAME': "",
 
     'default': {
         "ENGINE": 'django.db.backends.postgresql',
-        "NAME": "library_management_system",
+        "NAME": "library_management_system_one_fm",
         "USER": "One-FM",
         "PASSWORD": "1234567890",
         "HOST": "localhost",
@@ -91,7 +90,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "accounts.Members"
 LOGIN_REDIRECT_URL = "/"
 
 # Password validation
@@ -130,7 +129,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR / "static")]
 STATIC_ROOT = "staticfiles"
 
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR / "media")
 
 CKEDITOR_UPLOAD_PATH = "ck_uploads/"
@@ -144,3 +143,11 @@ CRISPY_TEMPLATE_PACK = 'uni_form'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'koderblvck@gmail.com'
+EMAIL_HOST_PASSWORD = 'xagfwzvkkbgbelif'
+EMAIL_PORT = 465

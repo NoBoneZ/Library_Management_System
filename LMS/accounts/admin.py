@@ -1,13 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomUserChangeForm
-from .models import User, Wallet, Inbox
+from .forms import CustomMembersChangeForm
+from .models import Members, Wallet, Inbox, WalletTransaction
 
 
-class CustomUserAdmin(UserAdmin):
+class CustomMembersAdmin(UserAdmin):
     class Meta:
-        form = CustomUserChangeForm
+        form = CustomMembersChangeForm
 
         fieldsets = (('Main Information',
                       {"fields": (
@@ -28,8 +28,14 @@ class InboxAdmin(admin.ModelAdmin):
     list_display = ("sender", "date_created", "is_read")
 
 
+class WalletTransactionAdmin(admin.ModelAdmin):
+    list_display = ("transaction_type", "amount", "date_occurred", "balance")
+    list_filter = ("wallet",)
+
+
 # Register your models here.
 
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(Members, CustomMembersAdmin)
 admin.site.register(Wallet, WalletAdmin)
 admin.site.register(Inbox, InboxAdmin)
+admin.site.register(WalletTransaction, WalletTransactionAdmin)

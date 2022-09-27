@@ -23,7 +23,8 @@ urlpatterns = [
     path('LMS-restricted-path/', admin.site.urls),
     path("accounts/", include("accounts.urls")),
     path("management_system/", include("management_system.urls")),
-    path("", RedirectView.as_view(url="management_system/"))
+    path("", RedirectView.as_view(url="management_system/")),
+    path("payments", include("payments.urls")),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

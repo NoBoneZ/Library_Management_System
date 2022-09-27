@@ -1,10 +1,11 @@
 import datetime
 import io
+import csv
 
 from django.shortcuts import render, reverse
 from django.db.models import Q, Count
 from django.contrib import messages
-from django.http import HttpResponseRedirect, FileResponse
+from django.http import HttpResponseRedirect, FileResponse, HttpResponse
 from django.views.generic import DetailView, View, ListView
 import requests
 from reportlab.pdfgen import canvas
@@ -13,7 +14,7 @@ from reportlab.lib.pagesizes import letter
 
 from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn, RenewalRequest
 from .forms import BookForm, ImportDataViaApiForm
-from accounts.models import User, Inbox, Wallet, WalletTransaction
+from accounts.models import Members, Inbox, Wallet, WalletTransaction
 
 
 # Create your views here.
@@ -31,7 +32,7 @@ def high_paying_customers():
             if customers.sum_of_debit() in sum_of_debit[:10]][:10]
 
 
-def report_to_pdf(header: str, object_list: []):
+def report_to_pdf(header: str, object_list):
     buf = io.BytesIO()
     c = canvas.Canvas(buf, pagesize=letter, bottomup=0)
     textob = c.beginText()
@@ -61,6 +62,20 @@ def report_to_pdf(header: str, object_list: []):
     return buf
 
 
+def report_to_csv(file_name: str, header_list: [], queryset, object_values_list: []):
+    response = HttpResponse(content_type="text/csv")
+    response["Content_Disposition"] = f'attachment;filename={file_name}.csv'
+
+    writer = csv.writer(response)
+
+    writer.writerow([header_list])
+
+    for item in queryset:
+        writer.writerow([object_values_list])
+
+    return response
+
+
 def home(request):
     search = request.GET.get("search") if request.GET.get("search") is not None else " "
 
@@ -71,22 +86,22 @@ def home(request):
     book_checker = list(BookRequest.not_answered_objects.filter(name_id=request.user.id))
     book_checker += list(BorrowedBook.not_returned_objects.filter(borrower_id=request.user.id))
 
-    # open_time = datetime.time(9, 00, 0)
-    # close_time = datetime.time(20, 00, 00)
-    # if open_time <= datetime.datetime.now().time() <= close_time:
-    #     is_open = True
-    # else:
-    #     is_open = False
+    open_time = datetime.time(9, 00, 0)
+    close_time = datetime.time(20, 00, 00)
+    if open_time <= datetime.datetime.now().time() <= close_time:
+        is_open = True
+    else:
+        is_open = False
 
     context = {
-        "genres": Genre.objects.all(),
+        # "genres": Genre.objects.all(),
         "books": list_of_books,
-        "user_book_request": [book_request.book_id
-                              for book_request in book_checker] if request.user.is_authenticated else [],
+        "members_book_request": [book_request.book_id
+                                 for book_request in book_checker] if request.user.is_authenticated else [],
         "popular_books": popular_books()[:5],
-        # "open_time": open_time,
-        # 'close_time': close_time,
-        # "is_open": is_open,
+        "open_time": open_time,
+        'close_time': close_time,
+        "is_open": is_open,
 
     }
     return render(request, "management_system/home.html", context)
@@ -152,7 +167,7 @@ class MakeBookRequestView(View):
             messages.error(request, "Your Outstanding debts is too much, Kindly settle some !")
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
-        book_request = BookRequest.objects.get_or_create(name=User.active_objects.get(id=request.user.id),
+        book_request = BookRequest.objects.get_or_create(name=Members.active_objects.get(id=self.request.user.id),
                                                          book=Book.active_objects.get(pk=self.kwargs["pk"]))[0]
 
         book_request.is_answered = False
@@ -203,12 +218,12 @@ class LibrarianBookRequestView(ListView):
         bad_default_books = BorrowedBook.not_returned_objects.filter(debt_incurred_default__gte=500).values_list(
             'borrower_id')
 
-        context["bad_default_members"] = User.active_objects.filter(pk__in=bad_default_books)
+        context["bad_default_members"] = Members.active_objects.filter(pk__in=bad_default_books)
         context["book_requests"] = self.get_queryset()
         context["unpicked_books"] = BorrowedBook.active_objects.filter(is_picked=False, is_returned=False)
         context["book_returns"] = BookReturn.active_objects.all()
-        context["all_members"] = User.active_objects.all()
-        context["suspended_members"] = User.inactive_objects.all()
+        context["all_members"] = Members.active_objects.all()
+        context["suspended_members"] = Members.inactive_objects.all()
         context["renewal_requests"] = RenewalRequest.active_objects.all()
         return context
 
@@ -222,7 +237,7 @@ class AcceptBookRequestView(View):
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
         borrowed_book = BorrowedBook.objects.create(
-            borrower=User.objects.get(id=book_request.name_id),
+            borrower=Members.objects.get(id=book_request.name_id),
             book=Book.active_objects.get(bookID=book_request.book_id),
             date_to_be_returned=datetime.datetime.now().date() + datetime.timedelta(days=21)
 
@@ -230,7 +245,7 @@ class AcceptBookRequestView(View):
         borrowed_book.save()
 
         message = Inbox.objects.create(
-            receiver=User.objects.get(id=book_request.name_id),
+            receiver=Members.objects.get(id=book_request.name_id),
             sender="The Library",
             message=f"Your request to lend {borrowed_book.book.title} has been approved, you are to pick it up "
                     f"immediately, and return it on or "
@@ -257,7 +272,7 @@ class RejectBookRequestView(View):
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
         message = Inbox.objects.create(
-            receiver=User.objects.get(id=book_request.name_id),
+            receiver=Members.objects.get(id=book_request.name_id),
             sender="The Library",
             message=f"We are Sorry, {book_request.book} is currently Unavailable for you, Please Try again later, "
                     f"Thank You ! :) "
@@ -310,36 +325,44 @@ def approve_book_return(request, pk):
     borrowed_book.save()
 
     try:
-        user_wallet = Wallet.objects.get(owner_id=book_return.borrowed_book.borrower_id)
+        member_wallet = Wallet.objects.get(owner_id=book_return.borrowed_book.borrower_id)
     except:
         messages.error(request, "Wallet Not Found, Contact Admin")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
-    if user_wallet.balance < 5:
-        user_wallet.outstanding_debts += 5
-        user_wallet.save()
+    # if member_wallet.balance < 5:
+    #     member_wallet.outstanding_debts += (5 + borrowed_book.debt_incurred_default) - member_wallet.balance
+    #     member_wallet.balance = 0
+    #     member_wallet.save()
+    #
+    # else:
+    if (member_wallet.balance - (5 + borrowed_book.debt_incurred_default)) < 0:
+        member_wallet.balance -= (5 + borrowed_book.debt_incurred_default)
+        member_wallet.outstanding_debts += abs(member_wallet.balance)
+        member_wallet.balance = 0
+        member_wallet.save()
     else:
-        user_wallet.balance -= 5
-        user_wallet.save()
+        member_wallet.balance -= (5 + borrowed_book.debt_incurred_default)
+        member_wallet.save()
 
-    user_wallet_transaction = WalletTransaction.objects.create(
-        wallet=user_wallet,
+    member_wallet_transaction = WalletTransaction.objects.create(
+        wallet=member_wallet,
         transaction_type="Debit",
         description=f"Fee on the return of {borrowed_book.book}",
         amount=5,
-        balance=user_wallet.balance,
-        outstanding_debts=user_wallet.outstanding_debts,
+        balance=member_wallet.balance,
+        outstanding_debts=member_wallet.outstanding_debts,
 
     )
-    user_wallet_transaction.save()
+    member_wallet_transaction.save()
 
-    user_message = Inbox.objects.create(
-        receiver=User.active_objects.get(id=book_return.borrowed_book.borrower_id),
+    member_message = Inbox.objects.create(
+        receiver=Members.active_objects.get(id=book_return.borrowed_book.borrower_id),
         sender="The library",
         message=f"Your book return has been approved, You have been charged the standard Rs.5 .Thank you"
 
     )
-    user_message.save()
+    member_message.save()
 
     messages.success(request, "Book Return Approve successfully")
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
@@ -356,13 +379,13 @@ def reject_book_return(request, pk):
     book_return.is_approved = False
     book_return.save()
 
-    user_message = Inbox.objects.create(
-        receiver=User.objects.get(id=book_return.borrowed_book.borrower_id),
+    member_message = Inbox.objects.create(
+        receiver=Members.objects.get(id=book_return.borrowed_book.borrower_id),
         sender="The Library",
         message=f"Your Book Return Has Been Disapproved, kindly contact the librarian ASAP, as you will still be charged"
                 f"per day, until it is cleared"
     )
-    user_message.save()
+    member_message.save()
     messages.success(request, "Book Return Disapproved successfully")
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
@@ -438,14 +461,14 @@ def popular_books_pdf(request):
 
 def suspend_unsuspend_member(request, username):
     try:
-        chosen_member = User.objects.get(username=username)
-    except User.DoesNotExist:
+        chosen_member = Members.objects.get(username=username)
+    except Members.DoesNotExist:
         messages.error(request, "Error! , contact the Admin")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     chosen_member.is_active = not chosen_member.is_active
     chosen_member.save()
-    messages.success(request, "User action Taken Successfully")
+    messages.success(request, "Member action Taken Successfully")
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
@@ -472,14 +495,14 @@ class AcceptRenewalRequestView(View):
         renewal_request.is_approved = True
         renewal_request.is_active = True
 
-        user_message = Inbox.objects.create(
-            receiver=User.active_objects.get(id=borrowed_book.borrower_id),
+        member_message = Inbox.objects.create(
+            receiver=Members.active_objects.get(id=borrowed_book.borrower_id),
             sender="The library",
             message=f"Your renewal request for {borrowed_book.book} has been approved !"
 
         )
 
-        user_message.save()
+        member_message.save()
         borrowed_book.save()
         renewal_request.save()
 
@@ -498,15 +521,60 @@ class RejectRenewalRequestView(View):
         renewal_request.is_active = False
         renewal_request.save()
 
-        user_message = Inbox.objects.create(
-            receiver=User.active_objects.get(id=renewal_request.borrowed_book.borrower_id),
+        member_message = Inbox.objects.create(
+            receiver=Members.active_objects.get(id=renewal_request.borrowed_book.borrower_id),
             sender="The library",
             message=f"Your renewal request for {renewal_request.borrowed_book.book} has been Rejected!, "
                     f"make the return on time to avoid being charged the default fee"
 
         )
 
-        user_message.save()
+        member_message.save()
 
         messages.success(request, "Renewal Rejected Successfully !")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+def book_stock_report_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content_Disposition"] = f'attachment;filename=Book_stock_report.csv'
+
+    writer = csv.writer(response)
+
+    writer.writerow(["S/N", "Title", "Quantity in the Library", "Quantity lent out", "Total stock"])
+
+    for item in Book.active_objects.all().order_by("bookID"):
+        print(item)
+        writer.writerow([item.bookID, item.title, item.quantity_available(), item.quantity_lent_out(), item.quantity])
+
+    return response
+
+
+def popular_books_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content_Disposition"] = f"attachment;popular_books.csv"
+
+    writer = csv.writer(response)
+
+    writer.writerow(["S/N", "Title", "Times_lent", "Quantity in the library", "Total_Stock"])
+
+    for number, item in enumerate(popular_books()):
+        writer.writerow([(int(number) + 1), item.title, item.times_borrowed(), item.quantity_available(), item.quantity])
+
+    return response
+
+
+def high_paying_customers_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content_Disposition"] = f"High_Paying_Customers.csv"
+
+    writer = csv.writer(response)
+
+    writer.writerow(["S/N", "Owner", "Wallet_ID", "Amount Spent", "Current Balance"])
+
+    for number, item in enumerate(high_paying_customers()):
+        writer.writerow(
+            [(int(number) + 1), item.owner.username, item.wallet_number, item.sum_of_debit(), item.balance])
+
+    return response
+

@@ -96,10 +96,10 @@
 
             <a href="{% url 'accounts:sign_in' %}"><li class="authenticated-navbar-last-child" ><span>Sign In</span></li></a>
         {% else %}
-            <a href="{% url 'accounts:user_wallet' %}"><li>Wallet</li></a>
-            <a href=""><li>Profile</li></a>
-            <a href="{% url 'accounts:user_inbox' %}"><li>Inbox</li></a>
-            <a href="{% url 'accounts:user_borrowed_books' %}"><li>Books</li></a>
+            <a href="{% url 'accounts:member_wallet' %}"><li>Wallet</li></a>
+            <a href="{% url 'accounts:profile_page' %}"><li>Profile</li></a>
+            <a href="{% url 'accounts:member_inbox' %}"><li>Inbox</li></a>
+            <a href="{% url 'accounts:member_borrowed_books' %}"><li>Books</li></a>
             <a href="{% url 'accounts:sign_out' %}"><li class="unauthenticated-navbar-last-child" ><span>Sign out</span></li></a>
         {% endif %}
 

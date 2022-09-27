@@ -2,13 +2,13 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from .models import User
+from .models import Members
 from management_system.models import RenewalRequest
 
 
-class CustomUserCreationForm(UserCreationForm):
+class CustomMembersCreationForm(UserCreationForm):
     class Meta:
-        model = User
+        model = Members
         exclude = ("date_joined", "last_login", "superuser_status", "staff_status", "is_active", "password",
                    "phone_number"
                    )
@@ -19,12 +19,15 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
 
-class CustomUserChangeForm(UserChangeForm):
+class CustomMembersChangeForm(UserChangeForm):
     class Meta:
-        model = User
-        exclude = ("date_joined", "last_login", "superuser_status", "staff_status", "is_active", "password",
-                   "email", "password1", "password2", "username"
-                   )
+        model = Members
+        # exclude = ("date_joined", "last_login", "superuser_status", "staff_status", "is_active", "password",
+        #            "email", "password1", "password2", "username"
+        #            # )
+        fields = ["first_name", "last_name", "middle_name", "profile_picture",
+                  "phone_number", "age", "gender", "address"
+                  ]
 
 
 class RenewalRequestForm(forms.ModelForm):

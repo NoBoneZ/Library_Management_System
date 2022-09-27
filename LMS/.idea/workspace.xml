@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="36619741-b9c2-4afb-8c0c-5a10a565119f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/payments/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_10.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_11.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_3.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_4.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_5.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_6.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_7.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_8.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/images/img_9.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/accounts/profile_page.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/accounts/reset_password.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/footer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/payments/callback.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/payments/pay.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/payments/paypal.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/test.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/LMS.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/LMS.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LMS/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/LMS/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/LMS/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/LMS/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/admin.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0002_alter_user_age_alter_user_first_name_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0003_inbox.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0004_alter_inbox_options.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0005_wallet_wallet_number_alter_wallet_owner.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0006_alter_wallet_outstanding_debts.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0007_alter_wallet_wallet_number.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0008_alter_wallet_wallet_number.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0009_alter_wallet_wallet_number.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0010_alter_user_managers_inbox_is_active_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0011_alter_user_managers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0012_user_profile_picture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0013_alter_user_profile_picture.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0014_wallet_pin_wallettransaction.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0015_alter_user_phone_number.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0016_wallettransaction_amount.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0017_wallettransaction_balance_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/migrations/0018_alter_wallettransaction_options.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/accounts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/context_processors.py" beforeDir="false" afterPath="$PROJECT_DIR$/management_system/context_processors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/management_system/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0002_alter_genre_name.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0003_book_date_added.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0004_remove_borrowedbook_is_active_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0005_alter_bookrequest_options.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0006_borrowedbook_is_picked.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0007_borrowedbook_is_active.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0008_renewalrequest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0009_remove_renewalrequest_book_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0010_alter_bookreturn_is_active.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0011_alter_book_options_alter_book_num_of_pages_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0012_alter_book_unique_together.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0013_alter_book_publisher.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0014_borrowedbook_debt_incurred_default.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0015_alter_renewalrequest_renewal_date.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0016_renewalrequest_renewal_days.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0017_remove_renewalrequest_renewal_date_and_more.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0018_renewalrequest_new_date_of_return.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/migrations/0019_alter_renewalrequest_new_date_of_return.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/management_system/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/management_system/tests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/management_system/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/management_system/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/management_system/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/borrowed_books.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/borrowed_books.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/inbox.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/inbox.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/sign_in.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/sign_in.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/sign_in_sign_up.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/sign_in_sign_up.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/user_book_calendar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/members_book_calendar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/accounts/user_wallet.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/accounts/members_wallet.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base_generic.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base_generic.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/management_system/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/management_system/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/management_system/report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/management_system/report.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/navbar.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2FIBh7QBWk0iTE95PcH2dMVuyZK" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\AbrahamGrahamAdekunl\Desktop\One-fm\library_management_system\LMS\templates\payments" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="36619741-b9c2-4afb-8c0c-5a10a565119f" name="Changes" comment="" />
+      <created>1664169836239</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1664169836239</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

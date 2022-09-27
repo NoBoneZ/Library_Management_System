@@ -75,6 +75,7 @@
         color: #2A639C;
         font-family:mullish;
         margin-left:100px;
+        cursor:pointer;
     }
 
 
@@ -116,6 +117,7 @@
       display:flex;
       align-items:center;
       justify-content:center;
+      cursor:pointer;
     }
 
     .pop--up--sign--up{
@@ -135,7 +137,7 @@
                     transform 0ms ease-in-out 00ms;
     }
 
-    .pop--up--sign--up .active{
+    .pop--up--sign--up.active{
         top:50%;
         opacity:1;
         transform:translate(-50%, -50%) scale(1);
@@ -144,6 +146,257 @@
                     transform 0ms ease-in-out 00ms;
 
     }
+
+    .close-btn{
+        position:absolute;
+        top:10px;
+        right:15px;
+        width:25px;
+        height:25px;
+        background-color:#888;
+        color:#eee;
+        cursor:pointer;
+        text-align:center;
+        border-radius:15px;
+        line-height:15px;
+
+     }
+
+    .pop--up--sign--up img{
+        height: 80px;
+        width: 150px;
+        margin-left: 90px;
+        margin-top: 20px;
+    }
+
+
+    .pop--up--sign--up h3{
+        height: 35px;
+        width: 229px;
+        font-family: Mulish;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 29px;
+        text-align: center;
+        color:#54565B;
+        margin: -10px 0px 0px 50px
+    }
+
+
+     .pop--up--sign--up p{
+        font-family: Mulish;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 29px;
+        text-align: center;
+        color:#9FA19C;
+    }
+
+
+    #p--term--2{
+        margin-top:-15px;
+    }
+
+
+    .sign-up--form{
+       margin:15px;
+
+    }
+
+    .sign-up--form label{
+       margin-left:20px;
+    }
+
+     .sign-up--form input[type=tel],
+      .sign-up--form select,
+      .sign-up--form input[type=email],
+      .sign-up--form input[type=password],
+      .sign-up--form input[type=text]{
+        border:1px solid #2A639C;
+        height: 30px;
+        width: 300px;
+        border-radius: 15px;
+        margin-top:5px;
+        margin-left:20px;
+
+    }
+
+
+
+    .sign-up--form input[type=submit]{
+        border:1px solid #2A639C;
+        background:#2A639C;
+        margin-top:5px;
+        height: 38px;
+        width: 330px;
+        border-radius: 8px;
+        color:white;
+        margin-left:20px;
+
+
+    }
+
+    #signup-paragraph{
+       text-decoration:none;
+       margin-left:-100px;
+       margin-top:-15px;
+
+    }
+
+     .pop--up--sign--up a{
+       text-decoration:none;
+       margin-top:-5px;
+    }
+
+
+    #back-to-signin{
+        height: 13px;
+        width: 6px;
+        margin-right:10px;
+
+    }
+
+
+
+
+     .pop--up--forgot--password{
+        height:480px;
+        position:absolute;
+        top:-150%;
+        left:50%;
+        opacity:0;
+        transform:translate(-50%, -50%) scale(1.25);
+        width:500px;
+        padding:20px, 30px;
+        background-color:white;
+        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
+        border-radius:10px;
+        transition: top 0ms ease-in-out 0ms,
+                    opacity 200ms ease-in-out 0ms,
+                    transform 0ms ease-in-out 00ms;
+    }
+
+    .pop--up--forgot--password.active{
+        top:50%;
+        opacity:1;
+        transform:translate(-50%, -50%) scale(1);
+        transition: top 0ms ease-in-out 200ms,
+                    opacity 200ms ease-in-out 0ms,
+                    transform 0ms ease-in-out 00ms;
+
+    }
+
+
+
+    .pop--up--forgot--password img{
+        height: 80px;
+        width: 150px;
+        margin-left: 130px;
+        margin-top: 20px;
+    }
+
+
+    .pop--up--forgot--password h3{
+        height: 35px;
+        width: 229px;
+        font-family: Mulish;
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 29px;
+        text-align: center;
+        color:#54565B;
+        margin: -10px 0px 0px 100px
+    }
+
+
+     .pop--up--forgot--password p{
+        font-family: Mulish;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 29px;
+        text-align: center;
+        color:#9FA19C;
+    }
+
+    #f-p-p-p--term--2{
+        margin-top:-15px;
+        margin-bottom:20px;
+    }
+
+
+
+    .forgot-password--form{
+       margin:15px;
+
+    }
+
+    .forgot-password--form label{
+       margin-top:20px;
+       margin-left:160px;
+       margin-bottom:17px;
+    }
+
+
+    .forgot-password--form span{
+        font-size:16px;
+
+    }
+
+
+     .forgot-password--form input[type=email]{
+        border:1px solid #2A639C;
+        height: 40px;
+        width: 300px;
+        border-radius: 15px;
+        margin-top:5px;
+        margin-left:70px;
+
+    }
+
+
+
+    .forgot-password--form input[type=submit]{
+        border:1px solid #2A639C;
+        background:#2A639C;
+        margin-top:5px;
+        height: 38px;
+        width: 330px;
+        border-radius: 8px;
+        color:white;
+        margin-left:60px;
+        cursor:pointer;
+
+
+    }
+
+    #f-p-signup-paragraph{
+       text-decoration:none;
+       margin-left:-140px;
+       margin-top:-5px;
+
+    }
+
+     .pop--up--forgot--password a{
+       text-decoration:none;
+       margin-top:-5px;
+    }
+
+
+    #f-p-back-to-signin{
+        height: 13px;
+        width: 6px;
+        margin-right:10px;
+        margin-bottom: -1px;
+
+    }
+
+
+
+
+
+
+
+
 
 
 
@@ -162,35 +415,139 @@
 
                 <label>Email </label>
                 <br>
-                <input type="email" name="email" placeholder="Enter your email">
+                <input type="email" name="email_signin" placeholder="Enter your email">
                 <br>
 
                 <label>Password </label>
                 <br>
-                <input type="password" name="password" placeholder="Enter Password">
+                <input type="password" name="password_signin" placeholder="Enter Password">
                 <i class="fa fa-eye" style="font-size:15px" id="password--eye"></i>
                 <br>
 
                 <input type="checkbox"><span class="remember--me">Remember Me</span>
-                <span id="forgot--password"><a href="">Forgot Password ?</a></span>
+                <span id="forgot--password">Forgot Password ?</span>
 
                 <br>
                 <br>
                 <button><span id="sign-in-button-span">Sign In</span></button>
 
                 <br>
-                <p><a href="{% url 'accounts:sign_up' %}" id="create_account">Create an account</a></p>
-
+<!--                <p><a href="{% url 'accounts:sign_up' %}" id="create_account">Create an account</a></p>-->
+                    <p id="create_account">Create an account</p>
             </form>
         </div>
 </div>
 
-<div class="pop--up--sign--up">hello world</div>
-"{% url 'accounts:sign_up' %}
+
+<div class="pop--up--sign--up">
+    <img src="{% static 'images/v logo.png'%}" alt="Vilgax Library Sign Up Form">
+    <div class="sign-up--form">
+<!--        <div class="close-btn">&times;</div>-->
+        <form action="{% url 'accounts:sign_up' %}" method="POST" enctype="multipart/form-data">
+
+            <h3>Create Account</h3>
+                    <p id="p--term-1">By signing up in Vilgax Library,</p>
+                <p id="p--term--2">you hereby agree to the terms and condition</p>
+            {% csrf_token %}
+            <label>Email</label>
+            <br>
+            {{form.email}}
+            <br>
+            <br>
+
+            <label>Username</label>
+            <br>
+            {{form.username}}
+            <br>
+            <br>
+
+<!--            <label>Phone Number</label>-->
+<!--            <br>-->
+<!--            {{form.phone_number}}-->
+<!--            <br>-->
+<!--            <br>-->
+
+            <label>Gender</label>
+            <br>
+            {{form.gender}}
+            <br>
+            <br>
+
+            <label>Password</label>
+            <br>
+            {{form.password1}}
+            <br>
+            <br>
+
+            <label>Password Confirmation</label>
+            <br>
+            {{form.password2}}
+            <br>
+            <br>
+
+            <input type="submit" value="Sign Up">
+        </form>
+    </div>
+
+    <p id="signup-paragraph"><a href="{% url 'accounts:sign_in' %}"><img id='back-to-signin' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To Sign In</a></p>
+</div>
+
+
+<div class="pop--up--forgot--password">
+    <img src="{% static 'images/v logo.png'%}" alt="Vilgax Library Sign Up Form">
+    <div class="forgot-password--form">
+        <form action="{% url 'accounts:forgot_password' %}" method="POST" enctype="multipart/form-data" >
+            {% csrf_token %}
+
+              <h3>Forgot Password</h3>
+            <p id="f-p-p--term-1">Enter your email below,</p>
+            <p id="f-p-p--term--2">We will send instructions for setting a new Password</p>
+
+            <br>
+            <label><span>Registered Email</span></label>
+            <br>
+            <br>
+            <input type="email" name="email" placeholder="Enter a registered email">
+            <br>
+            <br>
+
+            <input type="submit" value="Submit">
+
+
+        </form>
+        </div>
+    <p id="f-p-signup-paragraph"><a href="{% url 'accounts:sign_in' %}">
+        <img id='f-p-back-to-signin' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To Sign In</a></p>
+
+</div>
+
+
+
 <script>
     document.querySelector("#create_account").addEventListener("click", function(){
 
         document.querySelector(".pop--up--sign--up").classList.add("active");
+
+    });
+
+    document.querySelector("#back-to-signin").addEventListener("click", function(){
+
+        document.querySelector(".pop--up--sign--up").classList.remove("active");
+
+    });
+
+
+
+
+    document.querySelector("#forgot--password").addEventListener("click", function(){
+
+        document.querySelector(".pop--up--forgot--password").classList.add("active");
+
+    });
+
+    document.querySelector("#back-to-signin").addEventListener("click", function(){
+
+        document.querySelector(".pop--up--sign--up").classList.remove("active");
 
     });
 

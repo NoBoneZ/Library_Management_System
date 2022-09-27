@@ -20,7 +20,10 @@ from .views import (home,
                     high_paying_customer_pdf,
                     popular_books_pdf,
                     RejectRenewalRequestView,
-                    AcceptRenewalRequestView
+                    AcceptRenewalRequestView,
+                    book_stock_report_csv,
+                    popular_books_csv,
+                    high_paying_customers_csv
                     )
 
 app_name = 'management_system'
@@ -45,6 +48,10 @@ urlpatterns = [
     path("reject_book_return/<int:pk>", reject_book_return, name="reject_book_return"),
 
     path("library_report/", ReportView.as_view(), name="library_report"),
+    path("book_stock_report_csv/", book_stock_report_csv, name="book_stock_csv"),
+    path("popular_books_csv/", popular_books_csv, name="popular_books_csv"),
+    path("high_paying_customers_csv/", high_paying_customers_csv, name="high_paying_customers_csv"),
+
 
     path("import_books_via_api/", ImportDataViaApiView.as_view(), name="import_data"),
     path("suspend_member/<str:username>/", suspend_unsuspend_member, name="suspend_unsuspend_member"),

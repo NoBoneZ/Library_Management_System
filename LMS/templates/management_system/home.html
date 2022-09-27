@@ -3,40 +3,14 @@
 
 
 {% block content %}
-<style>
+  <style>
   .home--grid{
     display: grid;
     grid-template-columns:0.5fr 3fr;
     background-color:white;
   }
 
-  .genre--grid h3{
-    font-family: Sora;
-    font-size: 19px;
-    font-weight: 400;
-    line-height: 29px;
-    letter-spacing: 1px;
-    text-align: left;
-    margin-top:55px;
 
-
-  }
-
-  .genre--grid li{
-    list-style-type:none;
-
-  }
-
-  .genre--grid a{
-    text-decoration:none;
-    color:#54565B;
-  }
-
-  .genre--icon{
-    height: 16px;
-    width: 16px;
-    margin:0px 0px -20px -35px;
-  }
 
   .books--grid--top--image{
     height: 333px;
@@ -50,29 +24,33 @@
 
 
   .library--status{
-    height: 105px;
-    width: 450px;
+    height: 70px;
+    width: 400px;
     background-color:#FFFFFF;
     color:#1E5288;
     margin:-200px 00px 0px 0px;
     position: absolute;
     top: 430px;
     z-index: 1000;
+    padding:5px;
   }
 
   .library--status h3{
     font-family: Sora;
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 700;
     line-height: 48px;
     letter-spacing: 0em;
     text-align: left;
-    margin-top:-5px;
+    margin-top:-15px;
+    margin-left: 30px;
   }
 
   .library--status img{
      height: 12px;
      width: 12px;
+     margin-left: 30px;
+     margin-top:-10px;
   }
 
   .library--status p{
@@ -87,7 +65,7 @@
     {% else %}
       color:red;
     {% endif %}
-    margin: -5px 0px 25px 0px;
+    margin: -22px 0px 25px 48px;
 
 
   }
@@ -96,12 +74,18 @@
   .library--search--appointment{
       display:grid;
       grid-template-columns:2fr 1fr;
-      margin-bottom:30px;
+      margin:30px 0px;
   }
 
   .library--search{
       height:220px;
       background-color: #0C234B;
+
+
+  }
+
+  .library--search form{
+      position:relative;
 
   }
 
@@ -115,16 +99,16 @@
       letter-spacing: 0em;
       text-align: left;
       color:white;
-      margin-left:10px;
+      margin-left:25px;
 
   }
 
   .library--search input[type=text]{
-      height: 50px;
+      height: 60px;
       width: 800px;
-      border-radius:3px;
+      border-radius:8px;
       margin-top: 10px;
-      margin-left:10px;
+      margin-left:22px;
   }
 
 
@@ -138,15 +122,15 @@
       border-radius:5px;
       z-index:1000;
       position: absolute;
-      top: 610px;
-      left:970px;
+      top: 68px;
+      right: -40px;
       z-index: 1000;
       cursor:pointer;
   }
 
 
   .library--appointment{
-      width: 340px;
+      width: 387px;
       margin-left: 10px;
   }
 
@@ -194,7 +178,7 @@
   .library--appointment button{
     background-color:#790417;
     height: 30px;
-    width: 158px;
+    width: 180px;
     margin: 5px;
     color:white;
     border: 1px solid #790417;
@@ -244,6 +228,11 @@
       margin-top: 0px;
    }
 
+
+   .book--container span{
+        color:white;
+   }
+
    .book--container button{
       margin-left:7px;
       margin-bottom:3px;
@@ -255,127 +244,14 @@
       cursor:pointer;
    }
 
-   .home--profile--section{
-      position:absolute;
-      bottom:0;
-      margin-left:5px;
 
-   }
-
-   .home--profile--section img{
-      height:80px;
-      width:80px;
-      border-radius: 50%;
-      margin-bottom:-10px;
-
-
-
-   }
-
-   .home--profile--section h4{
-      font-family: Sora;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 29px;
-      text-align: left;
-      height: 11px;
-      width: 123.697265625px;
-   }
-
-   .home--profile--section p{
-      font-family: Sora;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 14px;
-      text-align: left;
-      color:#8B908B;
-
-   }
-
-    .home--profile--section button{
-      height: 40px;
-      width: 190px;
-      border-radius: 10px;
-      padding: 16px 56px 16px 56px;
-      background-color:#2A639C;
-      border: 1px solid #2A639C;
-      cursor:pointer;
-   }
-
-
-   .home--profile--section span{
-      color:white;
-      padding-bottom:9px;
-   }
 
 </style>
 
 
-<div class="home--grid">
+  <div class="home--grid">
 
-  <div class="genre--grid">
-    <h3>GENRE</h3>
-    <ul>
-      {% if genres %}
-      <a href="{% url 'management_system:home' %}">
-        <img src="{% static 'images/img.png'%}" alt="all" class="genre--icon">
-        <li>All Books</li>
-      </a>
-      {% endif %}
-
-      {% for genre in genres %}
-      <a href="{% url 'management_system:home' %}?search={{genre}}">
-        <img src="{% static 'images/img.png'%}" alt="{{genre}}" class="genre--icon">
-        <li>{{genre}}</li>
-      </a>
-      {% empty %}
-      <li>No Genre At The Moment</li>
-      {% endfor %}
-    </ul>
-
-      <div>
-        <a href="{% url 'management_system:librarian_book_page' %}">Library request</a>
-      <br>
-      <br>
-        <a href="{% url 'management_system:add_book' %}">Add Book</a>
-          <a href="{% url 'management_system:library_report'%}">Report</a>
-        <a href="{% url 'management_system:import_data'%}">import data</a>
-        <a href="{% url 'accounts:books_calendar' %}">book calendar</a>
-
-        <a href="{% url 'management_system:test' %}">test</a>
-
-      </div>
-
-
-    <div class="home--profile--section">
-        {% if request.user.is_authenticated %}
-          <div class="profile">
-            <img src="{% static 'images/koder_blvck.jpg'%}" alt="{{request.user.username}}">
-            <h4>{{request.user.username | title}}</h4>
-
-            {% if not request.user.is_staff %}
-            <p>Reader</p>
-            {% else %}
-            <p>Librarian</p>
-            {% endif %}
-
-            <a href="#"><button type="submit"><span>View Profile</span></button></a>
-
-
-          </div>
-        {% else %}
-          <a href="#"><button type="submit"><span>Sign In</span></button></a>
-        {% endif %}
-
-
-
-      </div>
-
-
-
-
-
-  </div>
+  {% include 'genre_component.html' %}
 
   <div class="books--grid">
 
@@ -399,7 +275,7 @@
 
         <h3>Library Search</h3>
 
-        <form action="" method="GET">
+        <form action="" method="GET" >
         <input type="text" name="search" placeholder="Enter the author, title or genre">
           <button type="submit">Search</button>
           </form>
@@ -440,8 +316,8 @@
 <!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
 <!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
 
-            {% if book.bookID not in user_book_request %}
-            <a href="{% url 'management_system:book_request' book.bookID %}"><button>Make Book Request</button></a>
+            {% if book.bookID not in members_book_request %}
+            <a href="{% url 'management_system:book_request' book.bookID %}"><button><span>Request Book</span></button></a>
             {% endif %}
           </div>
             {% endif %}
@@ -463,8 +339,8 @@
 <!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
 <!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
 
-            {% if book.bookID not in user_book_request %}
-            <a href="{% url 'management_system:book_request' book.bookID %}"><button>Make Book Request</button></a>
+            {% if book.bookID not in members_book_request %}
+              <a href="{% url 'management_system:book_request' book.bookID %}"><button><span>Request Book</span></button></a>
             {% endif %}
           </div>
           {% empty %}
@@ -474,7 +350,7 @@
           {% endfor %}
     </div>
 
-
+        {% include "footer.html" %}
 
   </div>
 

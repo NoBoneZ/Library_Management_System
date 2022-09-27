@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from accounts.models import User
+from accounts.models import Members
 
 
 # Create your models here.
@@ -99,14 +99,16 @@ class Book(models.Model):
         return BorrowedBook.active_objects.filter(book_id=self.bookID, is_picked=True).count()
 
     def quantity_available(self):
-        return int(self.quantity - BorrowedBook.active_objects.filter(book_id=self.bookID, is_picked=True).count())
+        if int(self.quantity - BorrowedBook.not_returned_objects.filter(book_id=self.bookID).count()) < 0:
+            return 0
+        return int(self.quantity - BorrowedBook.not_returned_objects.filter(book_id=self.bookID).count())
 
     def times_borrowed(self):
         return BorrowedBook.objects.filter(book_id=self.bookID).count()
 
 
 class BookRequest(models.Model):
-    name = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    name = models.ForeignKey(Members, on_delete=models.SET_NULL, null=True)
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     date_requested = models.DateTimeField(auto_now_add=True)
     is_answered = models.BooleanField(default=False)
@@ -120,13 +122,13 @@ class BookRequest(models.Model):
 
 
 class BorrowedBook(models.Model):
-    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    borrower = models.ForeignKey(Members, on_delete=models.SET_NULL, null=True)
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     date_borrowed = models.DateTimeField(auto_now_add=True)
     date_to_be_returned = models.DateField(null=True)
     date_returned = models.DateField(null=True, blank=True)
     debt_incurred_default = models.DecimalField(null=True, blank=True, decimal_places=2,
-                                                max_digits=5, default=0.00,)
+                                                max_digits=5, default=0.00, )
     is_picked = models.BooleanField(default=False)
     is_returned = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
