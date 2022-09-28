@@ -180,15 +180,20 @@
 
                 <img src="{{book.thumbnail.url}}" alt="{{book}}">
 
+                {% if request.user.is_authenticated %}
                 <a href="{% url 'management_system:read_later' book.bookID %}"><button type="submit" class="read--later"><span>Read Later</span></button></a>
 
                 <a href="{% url 'management_system:book_request' book.bookID %}"><button type="submit" class="request--book"><span>Request Book</span></button></a>
+                {% endif %}
             </div>
 
             <div class="overview--description--and--review">
 
                 <div class="mid_desc__and__review">
                     <h3>{{book.title}}</h3>
+                    {% if request.user.is_authenticated and request.user.is_staff %}
+                    <span><a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit</a></span> <span><a href="{% url 'management_system:delete_book' book.bookID %}">Delete</a></span>
+                    {% endif %}
                     <p>by <span class="book-authors">{{book.authors}}</span></p>
 
                     <ul>

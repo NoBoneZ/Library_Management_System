@@ -79,7 +79,7 @@ class Members(AbstractUser):
 class Wallet(models.Model):
     owner = models.OneToOneField(Members, on_delete=models.SET_NULL, null=True)
     wallet_number = models.UUIDField(editable=False, unique=True, null=True, default=uuid4)
-    pin = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)], default=1111)
+    pin = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)], default=int("".join(sample(digits, 4))))
     balance = models.DecimalField(null=True, decimal_places=2, default=0.00,
                                   max_digits=35, validators=[MinValueValidator(0.0)])
     outstanding_debts = models.DecimalField(null=True, blank=True, decimal_places=2,
@@ -89,9 +89,9 @@ class Wallet(models.Model):
     def __str__(self):
         return f"{self.owner.username} ---- {self.wallet_number}"
 
-    def save(self, *args, **kwargs):
-        self.pin = int("".join(sample(digits, 4)))
-        return super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     self.pin = int("".join(sample(digits, 4)))
+    #     return super().save(*args, **kwargs)
 
     def sum_of_debit(self):
         return sum([trans.amount for trans in WalletTransaction.active_objects.filter(wallet_id=self.id)])

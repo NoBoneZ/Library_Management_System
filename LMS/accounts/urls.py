@@ -11,7 +11,8 @@ from .views import (sign_up,
                     forgot_password,
                     reset_password,
                     profile_page_view,
-                    transaction_report_csv
+                    transaction_report_csv,
+                    credit_wallet
                     )
 
 app_name = "accounts"
@@ -30,6 +31,7 @@ urlpatterns = [
     path("book_calendar/", books_calendar_view, name="books_calendar"),
     path("make_renewal_request/<int:pk>", make_renewal_request, name="make_renewal"),
 
-    path("transaction_report/", transaction_report_csv, name='transaction_report')
+    path("transaction_report/", transaction_report_csv, name='transaction_report'),
+    path("credit_wallet/", credit_wallet, name="credit_wallet" )
 
 ]

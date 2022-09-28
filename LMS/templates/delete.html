@@ -1,0 +1,24 @@
+{% extends "base_generic.html" %}
+
+
+{% block content %}
+<style>
+
+</style>
+
+
+<form action="{% url 'management_system:delete_book' book.bookID %}" method="POST">
+    {% csrf_token %}
+
+    <h3>Are You Sure You want to delete '{{book}}' ? </h3>
+
+
+    <input type="submit" value="Confirm">
+    <br>
+    <input type="submit" value="Go back">
+
+
+
+</form>
+
+{% endblock %}

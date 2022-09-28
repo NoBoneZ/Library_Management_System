@@ -1,20 +1,26 @@
 import datetime
 import io
 import csv
+from abc import ABC
 
 from django.shortcuts import render, reverse
 from django.db.models import Q, Count
 from django.contrib import messages
 from django.http import HttpResponseRedirect, FileResponse, HttpResponse
 from django.views.generic import DetailView, View, ListView
+from django.core.mail import send_mail
 import requests
+from django.conf.urls.static import settings
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn, RenewalRequest, BookReview, ReadLater
-from .forms import BookForm, ImportDataViaApiForm, BookReviewForm
+from .forms import BookForm, ImportDataViaApiForm, BookReviewForm, BookEditForm
 from accounts.models import Members, Inbox, Wallet, WalletTransaction
+from accounts.views import not_staff
 
 
 # Create your views here.
@@ -109,7 +115,9 @@ def home(request):
     return render(request, "management_system/home.html", context)
 
 
+@login_required(login_url="accounts:sign_in")
 def add_book(request):
+    not_staff(request, request.user.id)
     if request.method == "POST":
         form = BookForm(request.POST, request.FILES)
 
@@ -123,7 +131,9 @@ def add_book(request):
     return render(request, "management_system/add_book.html", {"form": BookForm()})
 
 
+@login_required(login_url="accounts:sign_in")
 def edit_book_details(request, pk):
+    not_staff(request, request.user.id)
     try:
         book = Book.active_objects.get(bookID=pk)
     except Book.DoesNotExist:
@@ -131,7 +141,7 @@ def edit_book_details(request, pk):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     if request.method == "POST":
-        form = BookForm(request.POST, request.FILES, instance=book)
+        form = BookEditForm(request.POST, request.FILES, instance=book)
 
         if form.is_valid():
             form.save()
@@ -141,10 +151,12 @@ def edit_book_details(request, pk):
         error = (form.errors.as_text()).split("*")
         messages.error(request, error[len(error) - 1])
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-    return render(request, 'management_system/add_book.html', {"form": BookForm(instance=book)})
+    return render(request, 'management_system/edit_book.html', {"form": BookEditForm(instance=book)})
 
 
+@login_required(login_url="accounts:sign_in")
 def delete_book(request, pk):
+    not_staff(request, request.user.id)
     try:
         book = Book.active_objects.get(bookID=pk)
     except Book.DoesNotExist:
@@ -185,13 +197,19 @@ def book_detail_view(request, pk):
         "currently_reading": BorrowedBook.not_returned_objects.filter(book_id=pk),
         "have_read": BorrowedBook.returned_objects.filter(book_id=pk),
         "members_read": [book.borrower_id for book in BorrowedBook.returned_objects.filter(book_id=pk)],
+        "edit_form": BookEditForm(instance=book),
 
     }
 
     return render(request, "management_system/book_detail.html", context)
 
 
-class MakeBookRequestView(View):
+class MakeBookRequestView(LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         wallet = Wallet.objects.get(owner_id=request.user.id)
 
@@ -210,7 +228,9 @@ class MakeBookRequestView(View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required(login_url="accounts:sign_in")
 def pick_unpicked_books(request, pk):
+    not_staff(request, request.user.id)
     try:
         borrowed_book = BorrowedBook.active_objects.get(id=pk)
     except BorrowedBook.DoesNotExist:
@@ -224,7 +244,9 @@ def pick_unpicked_books(request, pk):
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required(login_url="accounts:sign_in")
 def delete_unpicked_books(request, pk):
+    not_staff(request, request.user.id)
     try:
         borrowed_book = BorrowedBook.active_objects.get(id=pk)
     except BorrowedBook.DoesNotExist:
@@ -238,9 +260,13 @@ def delete_unpicked_books(request, pk):
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-class LibrarianBookRequestView(ListView):
+class LibrarianBookRequestView(UserPassesTestMixin, LoginRequiredMixin, ListView):
     model = BookRequest
     template_name = "management_system/librarian_book_request_page.html"
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
 
     def get_queryset(self):
         return BookRequest.not_answered_objects.all()
@@ -260,7 +286,12 @@ class LibrarianBookRequestView(ListView):
         return context
 
 
-class AcceptBookRequestView(View):
+class AcceptBookRequestView(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         try:
             book_request = BookRequest.not_answered_objects.get(id=kwargs["pk"])
@@ -295,7 +326,12 @@ class AcceptBookRequestView(View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-class RejectBookRequestView(View):
+class RejectBookRequestView(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         try:
             book_request = BookRequest.not_answered_objects.get(id=kwargs["pk"])
@@ -317,7 +353,12 @@ class RejectBookRequestView(View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-class MakeBookReturnsView(View):
+class MakeBookReturnsView(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         try:
             borrowed_book = BorrowedBook.active_objects.get(id=kwargs["pk"])
@@ -335,7 +376,9 @@ class MakeBookReturnsView(View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required(login_url="accounts:sign_in")
 def approve_book_return(request, pk):
+    not_staff(request, request.user.id)
     try:
         book_return = BookReturn.active_objects.get(id=pk)
     except BookReturn.DoesNotExist:
@@ -400,7 +443,9 @@ def approve_book_return(request, pk):
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required(login_url="accounts:sign_in")
 def reject_book_return(request, pk):
+    not_staff(request, request.user.id)
     try:
         book_return = BookReturn.active_objects.get(id=pk)
     except BookReturn.DoesNotExist:
@@ -422,9 +467,13 @@ def reject_book_return(request, pk):
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-class ReportView(ListView):
+class ReportView(UserPassesTestMixin, LoginRequiredMixin, ListView):
     model = Book
     template_name = "management_system/report_page.html"
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
 
     def get_queryset(self):
         return Book.active_objects.all()
@@ -437,7 +486,12 @@ class ReportView(ListView):
         return context
 
 
-class ImportDataViaApiView(View):
+class ImportDataViaApiView(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         return render(request, "management_system/data_import.html", {"form": ImportDataViaApiForm()})
 
@@ -479,19 +533,25 @@ class ImportDataViaApiView(View):
             return HttpResponseRedirect(reverse("management_system:home"))
 
 
+@login_required(login_url="accounts:sign_in")
 def high_paying_customer_pdf(request):
+    not_staff(request, request.user.id)
     header = "List of High Paying Customers."
     the_pdf = report_to_pdf(header, high_paying_customers())
     return FileResponse(the_pdf, as_attachment=True, filename="High_paying_customers.pdf")
 
 
+@login_required(login_url="accounts:sign_in")
 def popular_books_pdf(request):
+    not_staff(request, request.user.id)
     header = "List Of Popular Books."
     the_pdf = report_to_pdf(header, popular_books())
     return FileResponse(the_pdf, as_attachment=True, filename="Popular_Books.pdf")
 
 
+@login_required(login_url="accounts:sign_in")
 def suspend_unsuspend_member(request, username):
+    not_staff(request, request.user.id)
     try:
         chosen_member = Members.objects.get(username=username)
     except Members.DoesNotExist:
@@ -508,7 +568,12 @@ def test_(request):
     return render(request, "management_system/chart.html")
 
 
-class AcceptRenewalRequestView(View):
+class AcceptRenewalRequestView(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         try:
             renewal_request = RenewalRequest.active_objects.get(id=kwargs["pk"])
@@ -542,7 +607,12 @@ class AcceptRenewalRequestView(View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-class RejectRenewalRequestView(View):
+class RejectRenewalRequestView(UserPassesTestMixin, LoginRequiredMixin, View):
+    login_url = "accounts:sign_in"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
     def get(self, request, *args, **kwargs):
         try:
             renewal_request = RenewalRequest.active_objects.get(id=kwargs["pk"])
@@ -567,7 +637,9 @@ class RejectRenewalRequestView(View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
+@login_required(login_url="accounts:sign_in")
 def book_stock_report_csv(request):
+    not_staff(request, request.user.id)
     response = HttpResponse(content_type="text/csv")
     response["Content_Disposition"] = f'attachment;filename=Book_stock_report.csv'
 
@@ -582,7 +654,9 @@ def book_stock_report_csv(request):
     return response
 
 
+@login_required(login_url="accounts:sign_in")
 def popular_books_csv(request):
+    not_staff(request, request.user.id)
     response = HttpResponse(content_type="text/csv")
     response["Content_Disposition"] = f"attachment;popular_books.csv"
 
@@ -597,7 +671,9 @@ def popular_books_csv(request):
     return response
 
 
+@login_required(login_url="accounts:sign_in")
 def high_paying_customers_csv(request):
+    not_staff(request, request.user.id)
     response = HttpResponse(content_type="text/csv")
     response["Content_Disposition"] = f"High_Paying_Customers.csv"
 
@@ -612,14 +688,69 @@ def high_paying_customers_csv(request):
     return response
 
 
+@login_required(login_url="accounts:sign_in")
 def read_later_view(request, pk):
+    not_staff(request, request.user.id)
     try:
         book = Book.active_objects.get(bookID=pk)
     except Book.DoesNotExist:
         messages.error(request, "Book does not exist")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
-    read_later_book = ReadLater.objects.get_or_create(book=book, member=Members.active_objects.get(request.user.id))[0]
+    read_later_book = ReadLater.objects.get_or_create(book=book, member=Members.active_objects.get(request.user.id))
     read_later_book.save()
 
     messages.success(request, f"{book} added successfully")
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+class MembersActionView(UserPassesTestMixin, LoginRequiredMixin, ListView):
+    login_url = "accounts:sign_in"
+    model = Members
+    template_name = "management_system/members.html"
+
+    def test_func(self):
+        return self.request.user.is_staff
+
+    def get_queryset(self):
+        return Members.active_objects.all()
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(MembersActionView, self).get_context_data(*args, **kwargs)
+        context["all_members"] = self.get_queryset()
+        context["suspended_members"] = Members.inactive_objects.all()
+        context["default_books"] = BorrowedBook.not_returned_objects.filter(
+            date_to_be_returned__lte=datetime.datetime.now().date())
+        return context
+
+
+@login_required(login_url="accounts:sign_in")
+def send_warning_message(request, id):
+    not_staff(request, request.user.id)
+    try:
+        borrowed_book = BorrowedBook.not_returned_objects.get(id=id)
+        user = Members.objects.get(id=borrowed_book.borrower_id)
+
+        email_body = {
+            "subject": f"Default on {borrowed_book.book} ",
+            'message': f"Hi, {user.username.title()} , We are Vilgax Libraries,  kindly return {borrowed_book.book}, "
+                       f"which you lent on {borrowed_book.date_borrowed} and were supposed to return on {borrowed_book.date_to_be_returned}"
+                       f"It is important to note that, a debt of {borrowed_book.debt_incurred_default} "
+                       f"has been amassed on your account, Do well to do the needful....Warm regards, Vilgax.",
+            "recepient": user.email,
+        }
+
+        send_mail(
+            email_body["subject"],
+            email_body["message"],
+            settings.EMAIL_HOST_USER,
+            [user.email]
+
+        )
+        print(email_body["message"])
+        messages.success(request, f"Mail has been sent to {user.email}")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    except Members.DoesNotExist or Exception as e:
+        print(e)
+        messages.error(request, "Member does not exist")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

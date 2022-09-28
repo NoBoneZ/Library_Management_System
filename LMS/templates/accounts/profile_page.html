@@ -154,6 +154,82 @@
     display:none;
   }
 
+
+
+  #wallet form{
+        height:400px;
+        position:absolute;
+        top:130%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        width:400px;
+        opacity:1;
+        padding:20px, 30px;
+        background-color:white;
+        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
+        border-radius:10px;
+    }
+
+
+
+    #wallet form h3{
+        height: 35px;
+        width: 229px;
+        font-family: Mulish;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 29px;
+        text-align: center;
+        color:#54565B;
+        margin: 40px 0px 50px -30px
+    }
+
+
+    #wallet form{
+       margin:15px;
+
+    }
+
+    #wallet label{
+       margin-left:30px;
+    }
+
+
+      #wallet input[type=password],
+      #wallet input[type=number]{
+        border:1px solid #2A639C;
+        height: 30px;
+        width: 300px;
+        padding:5px;
+        border-radius: 15px;
+        margin-top:5px;
+        margin-left:30px;
+
+    }
+
+
+
+
+    #wallet input[type=submit]{
+        border:1px solid #2A639C;
+        background:#2A639C;
+        margin-top:5px;
+        height: 38px;
+        width: 330px;
+        border-radius: 8px;
+        color:white;
+        margin-left:20px;
+
+
+    }
+
+    .create_book input[type=submit]:hover{
+        cursor:pointer;
+
+    }
+
+
+
   #edit_profile{
     display:none;
   }
@@ -304,11 +380,109 @@
             line-height: 36px;
             text-align: left;
             padding:20px;
+    }
 
 
+
+    .renewal--form{
+        height:325px;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        width:400px;
+        opacity:1;
+        padding:20px, 30px;
+        background-color:white;
+        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
+        border-radius:10px;
+    }
+
+    . .renewal--form.active{
+        top:50%;
+        opacity:1;
+        transform:translate(-50%, -50%) scale(1);
+        transition: top 0ms ease-in-out 200ms,
+                    opacity 200ms ease-in-out 0ms,
+                    transform 0ms ease-in-out 00ms;
+    }
+
+     .renewal--form h3{
+        height: 35px;
+        width: 229px;
+        font-family: Mulish;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 29px;
+        text-align: center;
+        color:#54565B;
+        margin: 40px 0px 50px 60px
+    }
+
+
+    .renewal--form{
+       margin:15px;
+
+    }
+
+     .renewal--form label{
+       margin-left:30px;
+    }
+
+
+     .renewal--form input[type=number]{
+        border:1px solid #2A639C;
+        height: 30px;
+        width: 300px;
+        padding:5px;
+        border-radius: 15px;
+        margin-top:5px;
+        margin-left:30px;
+
+    }
+
+
+     .renewal--form input[type=submit]{
+        border:1px solid #2A639C;
+        background:#2A639C;
+        margin-top:5px;
+        margin-bottom:19px;
+        height: 38px;
+        width: 330px;
+        border-radius: 8px;
+        color:white;
+        margin-left:20px;
 
 
     }
+
+    .renewal--form input[type=submit]:hover{
+        cursor:pointer;
+
+    }
+
+    .renewal--form a{
+       text-decoration:none;
+       margin-top:-5px;
+    }
+
+
+    #renewal--paragraph{
+       text-decoration:none;
+       margin-left:110px;
+       margin-top:5px;
+
+    }
+
+
+    #renewal--image{
+        height: 13px;
+        width: 6px;
+        margin-right:10px;
+        margin-bottom: -1px;
+
+    }
+
 
 
 
@@ -345,7 +519,7 @@
 
                 <div class="tab">
                     <ul>
-                  <li class="tablinks" onclick="openCity(event, 'wallet')">Wallet</li>
+                  <li class="tablinks" onclick="openCity(event, 'wallet')">Credit Wallet</li>
                   <li class="tablinks" onclick="openCity(event, 'edit_profile')">Edit Profile</li>
                   <li class="tablinks" onclick="openCity(event, 'transaction')">Transaction</li>
                   <li class="tablinks" onclick="openCity(event, 'inbox')">Inbox</li>
@@ -355,7 +529,28 @@
 
 
                  <div id="wallet" class="first-tab tabcontent">
-                     <h1>Just to test this shit</h1>
+
+
+                     <form action="{% url 'accounts:credit_wallet' %}" method="POST">
+                         {% csrf_token %}
+
+                         <h3>Credit Wallet</h3>
+
+                         <label>Pin</label>
+                         <br>
+                         <input type="password" name="pin" required>
+                         <br>
+                         <br>
+
+                         <label>Amount</label>
+                         <br>
+                         <input type="number" name="amount" required>
+                         <br>
+                         <br>
+
+                         <input type="submit" value="Credit Account">
+
+                     </form>
 
                 </div>
 
@@ -499,6 +694,10 @@
 
     </div>
 </div>
+
+
+
+
 
 
 

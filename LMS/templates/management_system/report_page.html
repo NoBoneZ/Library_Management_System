@@ -104,8 +104,12 @@
     }
 
     .popular_books_pdf{
-        margin:110px 0px 450px;
+        margin:180px 0px 0px 380px;
 
+    }
+
+    .high_paying_customers_pdf{
+        margin:200px 0px 0px 380px;
 
     }
 
@@ -207,7 +211,7 @@
 
                     <div id="high_paying_customers" class="first-tab tabcontent">
                         <table>
-                                <h2>High Paying Customers</h2>
+
                                 <thead>
                                     <tr>
                                         <th>S/N</th>
@@ -223,7 +227,7 @@
                                         {% for customer in high_paying_customers %}
                                         <tr>
                                             <td>{{forloop.counter}}</td>
-                                            <td>{{customer.owner.username}}</td>
+                                            <td>{{customer.owner.username | title}}</td>
                                             <td>{{customer.wallet_number}}</td>
                                             <td>{{customer.sum_of_debit}}</td>
                                             <td>{{customer.balance}}</td>
@@ -235,8 +239,8 @@
                                 </tbody>
                             </table>
 
-                        <a href="{% url 'management_system:high_paying_customers_pdf' %}"><button type="submit"> Download High Paying Customer Pdf</button></a>
-                        <a href="{% url 'management_system:high_paying_customers_csv' %}"><button type="submit"> Download High Paying CustomersCsv</button></a>
+                        <a href="{% url 'management_system:high_paying_customers_pdf' %}"><button type="submit" class="high_paying_customers_pdf"> Download High Paying Customer Pdf</button></a>
+                        <a href="{% url 'management_system:high_paying_customers_csv' %}"><button type="submit"> Download High Paying Customers Csv</button></a>
 
 
                     </div>

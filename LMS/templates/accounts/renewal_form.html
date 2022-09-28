@@ -1,10 +1,11 @@
-{% extends "base_generic.html" %}
-{% load static%}
+{% extends 'base_generic.html' %}
+{% load static %}
+
 
 {% block content %}
 <style>
-  .import_api_data{
-        height:500px;
+      .renewal--form{
+        height:325px;
         position:absolute;
         top:50%;
         left:50%;
@@ -17,7 +18,7 @@
         border-radius:10px;
     }
 
-    .import_api_data.active{
+    . .renewal--form.active{
         top:50%;
         opacity:1;
         transform:translate(-50%, -50%) scale(1);
@@ -26,7 +27,7 @@
                     transform 0ms ease-in-out 00ms;
                     }
 
-    .import_api_data h3{
+     .renewal--form h3{
         height: 35px;
         width: 229px;
         font-family: Mulish;
@@ -39,17 +40,17 @@
     }
 
 
-    .import_api_data{
+    .renewal--form{
        margin:15px;
 
     }
 
-    .import_api_data label{
+     .renewal--form label{
        margin-left:30px;
     }
 
-      .import_api_data input[type=number],
-      .import_api_data input[type=text]{
+
+     .renewal--form input[type=number]{
         border:1px solid #2A639C;
         height: 30px;
         width: 300px;
@@ -61,11 +62,11 @@
     }
 
 
-
-    .import_api_data input[type=submit]{
+     .renewal--form input[type=submit]{
         border:1px solid #2A639C;
         background:#2A639C;
         margin-top:5px;
+        margin-bottom:19px;
         height: 38px;
         width: 330px;
         border-radius: 8px;
@@ -75,34 +76,26 @@
 
     }
 
-    .import_api_data input[type=submit]:hover{
+    .renewal--form input[type=submit]:hover{
         cursor:pointer;
 
     }
 
-    .import_api_data a{
-        text-decoration:none;
+    .renewal--form a{
+       text-decoration:none;
+       margin-top:-5px;
     }
 
 
-
-
-    #back-to-signin{
-        height: 13px;
-        width: 6px;
-        margin-right:10px;
-
-    }
-
-    #import_books{
+    #renewal--paragraph{
        text-decoration:none;
        margin-left:110px;
-       margin-top:25px;
+       margin-top:5px;
 
     }
 
 
-    #import_books_image_img{
+    #renewal--image{
         height: 13px;
         width: 6px;
         margin-right:10px;
@@ -110,39 +103,26 @@
 
     }
 
+
 </style>
+<div class="renewal--form">
 
+    <h3>Renewal Form</h3>
+    <form action="">
+        {% csrf_token %}
 
-<div class="import_api_data">
+        <label>Renewal Days</label>
+        <br>
+        {{form.renewal_days}}
+        <br>
+        <br>
 
-  <h3>Import API Data</h3>
+        <input type="submit" value="Make request">
 
-    <form action="" method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  <label>Name</label>
-  <br>
-  {{form.name}}
-  <br>
-  <br>
+        <p id="renewal--paragraph"><a href="{% url 'accounts:books' %}">
+            <img id='renewal--image' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To Books Page</a></p>
 
-  <label>Number Of Books</label>
-  <br>
-  {{form.number_of_books}}
-  <br>
-  <br>
-
-  <label>Api Link</label>
-  <br>
-  {{form.api_link}}
-  <br>
-  <br>
-
-
-  <input type="submit" value="Import">
-</form>
-
-    <p id="import_books"><a href="{% url 'management_system:home' %}">
-        <img id='import_books_image_img' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To HomePage</a></p>
+    </form>
 
 </div>
 {% endblock %}

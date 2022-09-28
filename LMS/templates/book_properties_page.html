@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %}
+{% load static %}
 
 
 {% block content %}
@@ -65,6 +66,8 @@
        display:block;
     }
 
+    #my_default_books,
+    #my_borrowed_books,
     #my_unpicked_books,
     #renewal_request,
     #books_returned,
@@ -72,7 +75,9 @@
          margin-top:100px;
     }
 
-    #my_unpicked_books li,
+    #my_default_books li,
+   #my_borrowed_books li,
+   #my_unpicked_books li,
    #renewal_request li,
    #books_returned li,
    #unpicked_books li,
@@ -83,6 +88,9 @@
        width:1100px;
    }
 
+
+    #my_default_books li:nth-child(odd),
+   #my_borrowed_books li:nth-child(odd),
    #my_unpicked_books li:nth-child(odd),
    #renewal_request li:nth-child(odd),
    #books_returned li:nth-child(odd),
@@ -92,6 +100,8 @@
     }
 
 
+   #my_default_books p,
+   #my_borrowed_books p,
    #my_unpicked_books p,
    #renewal_request p,
    #books_returned p,
@@ -105,6 +115,7 @@
     text-align: left;
    }
 
+   #my_default_books button,
    #renewal_request button,
    #books_returned button,
    #unpicked_books button,
@@ -116,7 +127,7 @@
     color:white;
    }
 
-    .m_b_r
+    .m_b_r,
     .approve_rr,
     .approve_br,
     .picked_ub,
@@ -126,7 +137,7 @@
 
    }
 
-    .a_b_r,
+    .a_p_r,
     .reject_rr,
     .reject_br,
     .delete_ub,
@@ -136,7 +147,7 @@
 
    }
 
-   .a_b_r:hover
+   .a_p_r:hover,
    .m_b_r:hover,
    .approve_rr:hover,
    .reject_rr:hover,
@@ -155,12 +166,14 @@
         margin-right:60px;
    }
 
-
-
-
-
-
-
+   .a_p_r,
+   .m_b_r{
+    width:150px;
+    margin-left:60px;
+    height:35px;
+    border-radius:8px;
+    color:white;
+   }
 
 </style>
 <div class="book--header">
@@ -175,16 +188,20 @@
 
                     <div class="book_tab">
                           <ul>
-                              <li class="book_tablinks" onclick="openCity(event, 'book_request')">Book Request</li>
-                              <li class="book_tablinks" onclick="openCity(event, 'unpicked_books')">Unpicked Books</li>
-                              <li class="book_tablinks" onclick="openCity(event, 'books_returned')">Books Returned</li>
-                              <li class="book_tablinks" onclick="openCity(event, 'renewal_request')">Renewal Request</li>
+                              {% if request.user.is_staff %}
+                                  <li class="book_tablinks" onclick="openCity(event, 'book_request')">Book Request</li>
+                                  <li class="book_tablinks" onclick="openCity(event, 'unpicked_books')">Unpicked Books</li>
+                                  <li class="book_tablinks" onclick="openCity(event, 'books_returned')">Books Returned</li>
+                                  <li class="book_tablinks" onclick="openCity(event, 'renewal_request')">Renewal Request</li>
+                              {% endif %}
                               <li class="book_tablinks" onclick="openCity(event, 'my_unpicked_books')">My Unpicked Books</li>
                               <li class="book_tablinks" onclick="openCity(event, 'my_borrowed_books')">My Borrowed Books</li>
                               <li class="book_tablinks" onclick="openCity(event, 'my_default_books')">My Default Books</li>
                           </ul>
                     </div>
 
+
+                {% if request.user.is_staff %}
                     <div id="book_request" class="first-tab tabcontent">
                         <ul>
                             {% for book_request in book_requests %}
@@ -254,6 +271,7 @@
                             {% endfor %}
                              </ul>
                     </div>
+                {% endif %}
 
 
                     <div id="my_unpicked_books" class="first-tab tabcontent">
@@ -273,7 +291,7 @@
                            <ul>
                             {% for borrowed_book in borrowed_books %}
                             <li>
-                                <p>{{forloop.counter}}.  <em>{{unpicked_book.book |truncatechars:22}}</em> ,  {{borrowed__book.date_borrowed | timesince}} ago</p>
+                                <p>{{forloop.counter}}.  <em>{{borrowed_book.book |truncatechars:31}}</em> ,  {{borrowed_book.date_borrowed | timesince}} ago</p>
                                 <div class="buttons">
                                 <a href="{% url 'management_system:make_book_return' borrowed_book.id %}"><button class="m_b_r">Make Book Return</button></a>
                                 <a href="{% url 'accounts:make_renewal' borrowed_book.id %}"><button class="a_p_r">Apply For Renewal</button></a>
@@ -286,19 +304,33 @@
                     </div>
 
 
-<!--                    <div id="wallet" class="first-tab tabcontent">-->
-<!--                                 <h1>Just to test this shit</h1>-->
+                    <div id="my_default_books" class="first-tab tabcontent">
 
-<!--                    </div>-->
+                         <ul>
+                            {% for default_book in default_books %}
+                            <li>
+                                <p>{{forloop.counter}}.  <em>{{default_book.book |truncatechars:31}}</em> was due  {{default_book.date_to_be_returned | timesince}} ago, and you will be charged Rs. 5 per day</p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:make_book_return' default_book.id %}"><button class="m_b_r">Make Book Return</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Default Book at the moment</li>
+                            {% endfor %}
+                           </ul>
+
+                    </div>
 
 
             </div>
-            {% include footer.html %}
+            {% include 'footer.html' %}
 
         </div>
 
 
 </div>
+
+
 
 <script>
 console.log("running.....")
@@ -316,4 +348,45 @@ console.log("running.....")
       evt.currentTarget.className += 'active'
     }
   </script>
+
+
+
+<div class="renewal--form">
+
+    <h3>Renewal Form</h3>
+    <form action="">
+        {% csrf_token %}
+
+        <label>Renewal Days</label>
+        <br>
+        {{form.renewal_days}}
+        <br>
+        <br>
+
+        <input type="submit" value="Make request">
+
+        <p id="renewal--paragraph"><a href="{% url 'accounts:books' %}">
+            <img id='renewal--image' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To Books Page</a></p>
+
+    </form>
+
+</div>
+
+
+
+
+<script>
+     document.querySelector(".a_p_r").addEventListener("click", function(){
+
+        document.querySelector(".renewal--form").classList.add("active");
+
+    });
+
+
+    document.querySelector(".a_p_r").addEventListener("click", function(){
+
+        document.querySelector(".renewal--form").classList.remove("active");
+
+    });
+</script>
 {% endblock %}

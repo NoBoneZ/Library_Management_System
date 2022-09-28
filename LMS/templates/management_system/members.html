@@ -1,0 +1,302 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+
+{% block content %}
+<style>
+
+    .book--header{
+        display:grid;
+        grid-template-columns:0.5fr 3fr;
+
+    }
+
+    .book_tab li{
+        list-style-type:none;
+        display:inline;
+        margin-right:40px;
+        padding:5px;
+    }
+
+    .book_tab li:hover{
+       cursor:pointer;
+       color:#2E5185;
+    }
+
+    .book--properties h3{
+        font-family: Mulish;
+        font-size: 25px;
+        font-weight: 400;
+        line-height: 29px;
+        text-align: left;
+    }
+
+    .book--container{
+        border-top:70px solid #F9FAFB;
+        border-bottom:65px solid #F9FAFB;
+        border-left:25px solid #F9FAFB;
+        border-right:25px solid #F9FAFB;
+        border-radius:8px;
+        height:1550px;
+  }
+
+   .book--container li{
+        list-style-type:none;
+
+   }
+
+    .book_tab{
+        margin-top:-60px;
+    }
+
+    #members,
+    #suspended_members,
+    #book_defaulters,
+    #renewal_request,
+    #my_suspended_members,
+    #my_borrowed_books,
+    #my_default_books{
+        display:none;
+    }
+
+
+
+    #members{
+       margin-top:100px;
+       display:block;
+    }
+
+    #my_default_books,
+    #my_borrowed_books,
+    #my_suspended_members,
+    #renewal_request,
+    #book_defaulters,
+    #suspended_members{
+         margin-top:100px;
+    }
+
+    #my_default_books li,
+   #my_borrowed_books li,
+   #my_suspended_members li,
+   #renewal_request li,
+   #book_defaulters li,
+   #suspended_members li,
+   #members li{
+       padding:10px;
+       margin-left:30px
+       margin-right:30px;
+       width:1100px;
+   }
+
+
+    #my_default_books li:nth-child(odd),
+   #my_borrowed_books li:nth-child(odd),
+   #my_suspended_members li:nth-child(odd),
+   #renewal_request li:nth-child(odd),
+   #book_defaulters li:nth-child(odd),
+   #suspended_members li:nth-child(odd),
+   #members li:nth-child(odd){
+      background-color:#F5F3F3;
+    }
+
+
+   #my_default_books p,
+   #my_borrowed_books p,
+   #my_suspended_members p,
+   #renewal_request p,
+   #book_defaulters p,
+   #suspended_members p,
+   #members p{
+    font-family: Mulish;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 15px;
+    letter-spacing: 3px;
+    text-align: left;
+   }
+
+   #my_default_books button,
+   #renewal_request button,
+   #book_defaulters button,
+   #suspended_members button,
+   #members button{
+    margin-left:80px;
+    width:89px;
+    height:35px;
+    border-radius:8px;
+    color:white;
+   }
+
+    .m_b_r,
+    .approve_rr,
+    .approve_br,
+    .unsuspend_member,
+    .suspend_mem{
+        border:1px solid #09C105;
+        background-color:#09C105;
+
+   }
+
+    .a_p_r,
+    .reject_rr,
+    .suspend_member,
+    .delete_ub,
+    .send_warning,
+    .suspend_member{
+        border:1px solid #AB0520;
+        background-color:#AB0520;
+
+   }
+
+   .a_p_r:hover,
+   .m_b_r:hover,
+   .approve_rr:hover,
+   .reject_rr:hover,
+   .approve_br:hover,
+   .suspend_member:hover,
+   .unsuspend_member:hover,
+   .delete_ub:hover,
+   .send_warning:hover,
+   .suspend_member:hover,
+   .suspend_mem:hover{
+        cursor:pointer
+   }
+
+    .buttons{
+        float:right;
+        margin-top:-38px;
+        margin-right:60px;
+   }
+
+   .a_p_r,
+   .m_b_r{
+    width:150px;
+    margin-left:60px;
+    height:35px;
+    border-radius:8px;
+    color:white;
+   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+<div class="book--header">
+
+        {% include "genre_component.html" %}
+
+        <div class="book--properties">
+            {% include "navbar.html" %}
+            <h3>Members</h3>
+
+            <div class="book--container">
+
+                    <div class="book_tab">
+                          <ul>
+                              {% if request.user.is_staff %}
+                                  <li class="book_tablinks" onclick="openCity(event, 'members')">Members </li>
+                                  <li class="book_tablinks" onclick="openCity(event, 'suspended_members')">Suspended Members</li>
+                                  <li class="book_tablinks" onclick="openCity(event, 'book_defaulters')">Book Defaulters</li>
+                              {% endif %}
+                              
+                          </ul>
+                    </div>
+
+
+                {% if request.user.is_staff %}
+                    <div id="members" class="first-tab tabcontent">
+                        <ul>
+                            {% for member in all_members %}
+                            <li>
+                                <p>{{forloop.counter}}. <strong>{{member.username | title}}</strong></p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:suspend_unsuspend_member' member.username %}" ><button class="suspend_member">Suspend</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Members at the moment</li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+
+
+                     <div id="suspended_members" class="first-tab tabcontent">
+                            <ul>
+                            {% for member in suspended_members %}
+                            <li>
+                                <p>{{forloop.counter}}.  <em>{{member.username}}</em> </p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:suspend_unsuspend_member' member.username %}" ><button class="unsuspend_member">UnSuspend</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Suspended Member at the moment</li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+
+
+
+                    <div id="book_defaulters" class="first-tab tabcontent">
+                             <ul>
+                            {% for defaulters in default_books %}
+                            <li>
+                                <p>{{forloop.counter}}. <strong>{{defaulters.borrower.username | title}}</strong></p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:send_warning_message' defaulters.id %}" ><button class="send_warning"> Warning Message</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                                <li>No Defaulter at the moment</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+
+                {% endif %}
+
+
+
+            </div>
+            {% include 'footer.html' %}
+
+        </div>
+
+
+</div>
+
+
+
+<script>
+console.log("running.....")
+    function openCity(evt, cityName) {
+      var i, tabcontent, tablinks
+      tabcontent = document.getElementsByClassName('tabcontent')
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none'
+      }
+      tablinks = document.getElementsByClassName('tablinks')
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' active', '')
+      }
+      document.getElementById(cityName).style.display = 'block'
+      evt.currentTarget.className += 'active'
+    }
+  </script>
+{% endblock %}

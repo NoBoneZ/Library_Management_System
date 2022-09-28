@@ -3,7 +3,7 @@ import csv
 
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, reverse
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib import messages
 from django.conf.urls.static import settings
 from django.contrib.auth import update_session_auth_hash, login, logout, authenticate
@@ -12,6 +12,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import CustomMembersCreationForm, WalletPinForm, RenewalRequestForm, CustomMembersChangeForm
 from .models import Members, Inbox, Wallet, WalletTransaction
@@ -19,6 +21,12 @@ from management_system.models import BorrowedBook, BookReturn, RenewalRequest, B
 
 
 # Create your views here.
+
+def not_staff(request, pk):
+    user = Members.active_objects.get(id=pk)
+    if not user.is_staff:
+        messages.error(request, "You are not allowed")
+        return HttpResponseForbidden
 
 
 def sign_up(request):
@@ -82,6 +90,7 @@ def sign_in(request):
             return HttpResponseRedirect(reverse("management_system:home"))
         messages.error(request, "Invalid Password !")
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    logout(request)
     return render(request, "accounts/sign_in.html", {"form": CustomMembersCreationForm()})
 
 
@@ -92,7 +101,6 @@ def sign_out(request):
 
 def forgot_password(request):
     if request.method == "POST":
-        print(request.POST.get("email"))
         try:
             email = request.POST.get("email")
             user = Members.active_objects.get(email=email)
@@ -160,16 +168,18 @@ def reset_password(request, uid, token):
     return render(request, "accounts/reset_password.html", context)
 
 
-class MembersInboxView(ListView):
+class MembersInboxView(LoginRequiredMixin, ListView):
     model = Inbox
     context_object_name = "members_messages"
     template_name = "accounts/inbox.html"
+    login_url = "accounts:sign_in"
 
     def get_queryset(self):
         return Inbox.objects.filter(receiver_id=self.request.user.id)
 
 
-class MembersBorrowedBooksView(ListView):
+class MembersBorrowedBooksView(LoginRequiredMixin, ListView):
+    login_url = "accounts:sign_in"
     model = BorrowedBook
     template_name = "book_properties_page.html"
 
@@ -181,7 +191,7 @@ class MembersBorrowedBooksView(ListView):
         bad_default_books = BorrowedBook.not_returned_objects.filter(debt_incurred_default__gte=500).values_list(
             'borrower_id')
 
-        context["bad_default_members"] = Members.active_objects.filter(pk__in=bad_default_books)
+        # context["bad_default_members"] = Members.active_objects.filter(pk__in=bad_default_books)
         context["book_requests"] = self.get_queryset()
         context["unpicked_books"] = BorrowedBook.active_objects.filter(is_picked=False, is_returned=False)
         context["book_returns"] = BookReturn.active_objects.all()
@@ -189,14 +199,17 @@ class MembersBorrowedBooksView(ListView):
         context["suspended_members"] = Members.inactive_objects.all()
         context["renewal_requests"] = RenewalRequest.active_objects.all()
         context["borrowed_books"] = BorrowedBook.not_returned_objects.filter(borrower_id=self.request.user.id)
-        context["user_unpicked_books"] = BorrowedBook.objects.filter(borrower_id=self.request.user.id, is_returned=False,
-                                                                is_active=True, is_picked=False).order_by('date_borrowed')
+        context["user_unpicked_books"] = BorrowedBook.objects.filter(borrower_id=self.request.user.id,
+                                                                     is_returned=False,
+                                                                     is_active=True, is_picked=False).order_by(
+            'date_borrowed')
         context["default_books"] = BorrowedBook.not_returned_objects.filter(borrower_id=self.request.user.id,
                                                                             is_picked=True,
                                                                             date_to_be_returned__lte=datetime.datetime.today().date())
         return context
 
 
+@login_required(login_url="accounts:sign_in")
 def wallet_view(request):
     try:
         wallet = Wallet.objects.get(owner_id=request.user.id)
@@ -215,11 +228,13 @@ def wallet_view(request):
     return render(request, "accounts/members_wallet.html", {"form": WalletPinForm()})
 
 
+@login_required(login_url="accounts:sign_in")
 def books_calendar_view(request):
     not_returned_books = BorrowedBook.not_returned_objects.filter(borrower_id=request.user.id)
     return render(request, "accounts/members_book_calendar.html", {"not_returned_books": not_returned_books})
 
 
+@login_required(login_url="accounts:sign_in")
 def make_renewal_request(request, pk):
     try:
         borrowed_book = BorrowedBook.not_returned_objects.get(id=pk, is_returned=False)
@@ -245,9 +260,10 @@ def make_renewal_request(request, pk):
         error = (form.errors.as_text()).split("*")
         messages.error(request, error[len(error) - 1])
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-    return render(request, "management_system/add_book.html", {"form": RenewalRequestForm()})
+    return render(request, "accounts/renewal_form.html", {"form": RenewalRequestForm()})
 
 
+@login_required(login_url="accounts:sign_in")
 def profile_page_view(request):
     try:
         member = Members.active_objects.get(id=request.user.id)
@@ -271,12 +287,13 @@ def profile_page_view(request):
         "all_transactions": WalletTransaction.active_objects.filter(wallet__owner_id=request.user.id),
         "all_inbox": Inbox.objects.filter(receiver=request.user.id),
         "user_wallet": Wallet.objects.get(owner_id=request.user.id),
-        "member":member,
+        "member": member,
     }
 
     return render(request, "accounts/profile_page.html", context)
 
 
+@login_required(login_url="accounts:sign_in")
 def transaction_report_csv(request):
     response = HttpResponse(content_type="text/csv")
     response["Content_Disposition"] = f"attachment;{request.user.username}'s_transaction_report.csv"
@@ -285,20 +302,46 @@ def transaction_report_csv(request):
 
     writer.writerow(["S/N", "Transaction_Type", "Amount", "Description", "Date", "Outstanding_Debts", "Balance"])
 
-    for number, item in enumerate(WalletTransaction.objects.filter(wallet__owner_id=request.user.id).order_by("-date_occurred")):
-        writer.writerow([(int(number) + 1), item.transaction_type, item.amount, item.description, item.date_occurred, item.outstanding_debts, item.balance ])
+    for number, item in enumerate(
+            WalletTransaction.objects.filter(wallet__owner_id=request.user.id).order_by("-date_occurred")):
+        writer.writerow([(int(number) + 1), item.transaction_type, item.amount, item.description, item.date_occurred,
+                         item.outstanding_debts, item.balance])
 
     return response
 
 
-# def credit_account(request):
-#     try:
-#         wallet = Wallet.objects.get(owner_id=request.user.id)
-#     except Wallet.DoesNotExist:
-#         messages.error(request, "Error , Wallet Not found")
-#         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
-#
-#
-#     if request.method == "POST":
-#
-#
+@login_required(login_url="accounts:sign_in")
+def credit_wallet(request):
+    try:
+        wallet = Wallet.objects.get(owner_id=request.user.id)
+    except Wallet.DoesNotExist:
+        messages.error(request, "Error , Wallet Not found")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    if request.method == "POST":
+
+        if wallet.pin != int(request.POST.get("pin")):
+            messages.error(request, "Wrong pin, You will be logged out now")
+            logout(request)
+            return HttpResponseRedirect(reverse("accounts:sign_in"))
+        wallet.balance += int(request.POST.get("amount"))
+        wallet.save()
+
+        if wallet.outstanding_debts > 0:
+            wallet.balance = wallet.balance - wallet.outstanding_debts
+            if wallet.balance < 0:
+                wallet.outstanding_debts = abs(wallet.balance)
+            else:
+                wallet.outstanding_debts = 0
+        wallet.save()
+
+        wallet_transaction = WalletTransaction.objects.create(
+            wallet=wallet,
+            transaction_type="Credit",
+            amount=int(request.POST.get('amount')),
+            description=f"Credited account with {int(request.POST.get('amount'))}"
+
+        )
+        wallet_transaction.save()
+        messages.success(request, f"{wallet.wallet_number} credited with {request.POST.get('amount')} successfullly")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

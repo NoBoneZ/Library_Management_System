@@ -36,6 +36,10 @@
         margin-right: 80px
     }
 
+    .nav--bar li:hover{
+        cursor:pointer;
+     }
+
     #navbar-first-child li{
         color:#2A639C;
         font-family: Sora;
@@ -96,9 +100,11 @@
 
             <a href="{% url 'accounts:sign_in' %}"><li class="authenticated-navbar-last-child" ><span>Sign In</span></li></a>
         {% else %}
-            <a href="{% url 'accounts:member_wallet' %}"><li>Wallet</li></a>
-            <a href="{% url 'accounts:profile_page' %}"><li>Report</li></a>
-            <a href=""><li id="import_api_data_nav">Import</li></a>
+            {% if request.user.is_staff %}
+                <a href="{% url 'management_system:member_page' %}"><li>Members</li></a>
+                <a href="{% url 'management_system:library_report' %}"><li>Report</li></a>
+                <a  href="{% url 'management_system:import_data' %}" id="import_api_data_nav"><li>Import</li></a>
+            {% endif %}
             <a href="{% url 'accounts:books' %}"><li>Books</li></a>
             <a href="{% url 'accounts:sign_out' %}"><li class="unauthenticated-navbar-last-child" ><span>Sign out</span></li></a>
         {% endif %}

@@ -55,9 +55,10 @@
   #create_book_image {
     height: 40px;
     width: 40px;
-    margin-left:200px;
-    margin-top:-986410px;
-    position:relative;
+    margin-top: -90px;
+    position:absolute;
+    left:350px;
+
 
 
   }
@@ -88,7 +89,7 @@
   .library--search--appointment{
       display:grid;
       grid-template-columns:2fr 1fr;
-      margin:30px 0px;
+      margin:130px 0px;
   }
 
   .library--search{
@@ -372,7 +373,7 @@
         left:50%;
         transform:translate(-50%, -50%);
         width:400px;
-        opacity:0   ;
+        opacity:0;
         padding:20px, 30px;
         background-color:white;
         box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
@@ -498,7 +499,9 @@
       <p>Currently Closed</p>
       {% endif %}
 
-        <img src="{% static 'images/img_12.png' %}" alt="create_book" id="create_book_image">
+        {% if request.user.is_authenticated and request.user.is_staff %}
+        <a href="{% url 'management_system:add_book' %}"><img src="{% static 'images/img_12.png' %}" alt="create_book" id="create_book_image"></a>
+        {% endif %}
     </div>
 
     <div class="library--search--appointment">
@@ -543,17 +546,18 @@
             {% if book.quantity_available > 0 %}
               <div class="book--container">
              <a href="{% url 'management_system:book_detail' book.bookID %}" >
-            <img src="{% static 'images/image 17.png' %}" alt="{{book}}">
+            <img src="{{book.thumbnail.url}}" alt="{{book}}">
                   </a>
             <p>{{book.title|truncatechars:20}}</p>
 <!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
 <!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
-
+            {% if request.user.is_authenticated %}
             {% if book.bookID not in members_book_request %}
                   <a href="{% url 'management_system:book_request' book.bookID %}"><button><span>Request Book</span></button></a>
                   {% else %}
                   <a href="{% url 'management_system:book_request' book.bookID %}"><button style="background-color:#AB0520;"><span>Requested</span></button></a>
             {% endif %}
+                  {% endif %}
           </div>
             {% endif %}
           {% empty %}
@@ -570,18 +574,19 @@
           {% for book in popular_books %}
           <div class="book--container">
               <a href="{% url 'management_system:book_detail' book.bookID %}" >
-            <img src="{% static 'images/image 17.png' %}" alt="{{book}}">
+            <img src="{{book.thumbnail.url}}" alt="{{book}}">
                   </a>
             <p>{{book.title|truncatechars:20}}</p>
 
 <!--            <a href="{% url 'management_system:edit_book_details' book.bookID %}">Edit book</a>-->
 <!--            <a href="{% url 'management_system:delete_book' book.bookID %}">Delete book</a>-->
-
+            {% if request.user.is_authenticated %}
             {% if book.bookID not in members_book_request %}
               <a href="{% url 'management_system:book_request' book.bookID %}"><button><span>Request Book</span></button></a>
               {% else %}
               <a href="{% url 'management_system:book_request' book.bookID %}"><button style="background-color:#AB0520;"><span>Requested</span></button></a>
             {% endif %}
+              {% endif %}
           </div>
           {% empty %}
           <div class="book--container">
@@ -708,8 +713,8 @@
         document.querySelector(".import_api_data").classList.remove("active");
 
     });
-
-    document.querySelector("#import_books").addEventListener("click", function(){
+ console.log("running")
+    document.querySelector("#import_books_image_img").addEventListener("click", function(){
 
         document.querySelector(".import_api_data").classList.remove("active");
 

@@ -9,6 +9,12 @@ class BookForm(forms.ModelForm):
         exclude = ("bookID", "date_added", "is_active")
 
 
+class BookEditForm(forms.ModelForm):
+    class Meta:
+        model = Book
+        exclude = ("is_active", "date_added")
+
+
 class ImportDataViaApiForm(forms.Form):
     name = forms.CharField(max_length=500, help_text="Enter the name of the Api", required=True)
     number_of_books = forms.IntegerField(help_text="Enter the amount of books you want to import, not more than 30 "

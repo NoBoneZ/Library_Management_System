@@ -69,7 +69,7 @@ class Book(models.Model):
         help_text="End Every Name with a \, e.g, Adekunle, Ciroma Chukwuma/ , the main author's name should be the "
                   "first")
     thumbnail = models.ImageField(blank=True, upload_to="book_thumbnail", default="book_default.png")
-    description = models.TextField(blank=True,default="No Description Available !")
+    description = models.TextField(blank=True, default="No Description Available !")
     isbn = models.CharField(max_length=10, null=True, blank=True)
     isbn13 = models.CharField(max_length=13)
     average_rating = models.DecimalField(null=True, default=0.0, decimal_places=2, max_digits=3,
