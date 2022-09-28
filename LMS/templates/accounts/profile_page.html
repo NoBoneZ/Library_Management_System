@@ -615,21 +615,21 @@
                         display: none;
                     }
                 </style>
-                <script>
-                    let myDrop = document.querySelector('.my-dropdown-menu')
-                    function handleHover(){
-                        myDrop.style.display = 'block'
-                    }
-
-                    function handleLeave(){
-                        myDrop.style.display = 'none'
-                    }
-                </script>
+<!--                <script>-->
+<!--                    let myDrop = document.querySelector('.my-dropdown-menu')-->
+<!--                    function handleHover(){-->
+<!--                        myDrop.style.display = 'block'-->
+<!--                    }-->
+<!--onmouseover="handleHover()" onmouseleave="handleLeave()" -->
+<!--                    function handleLeave(){-->
+<!--                        myDrop.style.display = 'none'-->
+<!--                    }-->
+<!--                </script>-->
                   <div id="inbox" class="tabcontent">
                     <ul>
                         {% for user_message in all_inbox %}
-                      <div class="ind_message my-dropdown">
-                          <li><pre>{{forloop.counter}}  <strong>{{user_message.sender}}</strong>  {{user_message.message | truncatechars:80}}   {{user_message.date_created}}  <img class="dropdown" onmouseover="handleHover()" onmouseleave="handleLeave()" src="{% static 'images/img_7.png' %}" alt="dropdown"></pre></li>
+                      <div class="ind_message">
+                          <li><pre>{{forloop.counter}}  <strong>{{user_message.sender}}</strong>  {{user_message.message | truncatechars:80}}   {{user_message.date_created}}  <img class="dropdown" src="{% static 'images/img_7.png' %}" alt="dropdown"></pre></li>
                           <li class="my-dropdown-menu">{{user_message.message}}</li>
 
                         </div>
