@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Book
+from .models import Book, BookReview
 
 
 class BookForm(forms.ModelForm):
@@ -14,3 +14,9 @@ class ImportDataViaApiForm(forms.Form):
     number_of_books = forms.IntegerField(help_text="Enter the amount of books you want to import, not more than 30 "
                                                    "books", required=True)
     api_link = forms.CharField(max_length=500, help_text="Enter the link for the API", required=True)
+
+
+class BookReviewForm(forms.ModelForm):
+    class Meta:
+        model = BookReview
+        fields = ("message", )

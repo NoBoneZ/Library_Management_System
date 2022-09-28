@@ -1,0 +1,258 @@
+{% extends "base_generic.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    .book--detail--page{
+        display:grid;
+        grid-template-columns:0.5fr 3fr;
+
+    }
+
+    .detail{
+        display:grid;
+        grid-template-columns:0.5fr 2.5fr;
+    }
+
+    .book--column{
+        padding:5px;
+    }
+
+    .book--column a{
+        text-decoration:none;
+    }
+
+    .book--column img{
+        width:180px;
+        height:220px;
+        border-radius:5px;
+        margin-top: 10px;
+
+    }
+
+    .book--column button{
+       border-radius:5px;
+       display:block;
+       padding:5px;
+       margin:25px 0px;
+        height:46px;
+        width:180px;
+        cursor:pointer;
+
+    }
+
+    .read--later{
+        background-color:white;
+        color:#FD5252;
+        border:1px solid #FD5252;
+
+    }
+
+
+    .request--book{
+        background-color:#FD5252;
+        color:white;
+        border:1px solid #FD5252;
+        height:46px;
+        width:200px;
+    }
+
+    .overview--description--and--review{
+        display:grid;
+        grid-template-rows:0.5fr 2fr;
+
+    }
+
+    .overview--description--and--review span{
+        color:#2A639C;
+    }
+
+     .overview--description--and--review p{
+        color:#9FA19C;
+        font-family: Sora;
+        font-size: 14px;
+        font-weight: 200;
+        line-height: 30px;
+        text-align: left;
+
+    }
+
+    .mid_desc__and__review{
+         padding:5px;
+    }
+
+    .mid_desc__and__review li{
+        list-style-type:none;
+        display:inline;
+        margin:60px 60px 30px 0px;
+        color:#9FA19C;
+
+    }
+
+    .description_and_review{
+     display:grid;
+     grid-template-columns:1.5fr 0.5fr;
+
+    }
+
+    .description_and_review h4{
+         font-family: Sora;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 30px;
+        text-align: left;
+        color:#9FA19C;
+    }
+
+    .description pre{
+        font-family: Sora;
+        font-size: 14px;
+        font-weight: 200;
+        line-height: 30px;
+        text-align: left;
+    }
+
+    .description label{
+        color:#9FA19C;
+        font-family: Sora;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 30px;
+        letter-spacing: 0em;
+        text-align: left;
+
+    }
+
+    .description textarea{
+        height: 110px;
+        width: 400px;
+        border-radius: 12px;
+        background-color:#F9FAFB;
+        border:1px solid #EBEBEB;
+        padding:10px;
+
+    }
+
+    .description input[type=submit]{
+        height: 40px;
+        width: 180px;
+        border-radius: 5px;
+        background-color: #2A639C;
+        color:white;
+        border: 1px solid #2A639C;
+        margin-top:10px;
+        cursor:pointer;
+    }
+
+
+    .ind_review{
+    border:1px solid red;
+    border-radius:5px;
+    padding:5px;
+    box-shadow:2px 32px gainsboro;
+    }
+
+    .ind_review img{
+    width:90px;
+    height:90px;
+    }
+
+
+    .ind_review h4{
+    margin:0px 50px 0px 0px;
+    font-size:13px;
+    color:black;
+
+    }
+
+</style>
+
+
+<div class="book--detail--page">
+
+    {% include "genre_component.html" %}
+
+    <div class="book--detail">
+        {% include "navbar.html" %}
+        <div class="detail">
+
+            <div class="book--column">
+
+                <img src="{{book.thumbnail.url}}" alt="{{book}}">
+
+                <a href="{% url 'management_system:read_later' book.bookID %}"><button type="submit" class="read--later"><span>Read Later</span></button></a>
+
+                <a href="{% url 'management_system:book_request' book.bookID %}"><button type="submit" class="request--book"><span>Request Book</span></button></a>
+            </div>
+
+            <div class="overview--description--and--review">
+
+                <div class="mid_desc__and__review">
+                    <h3>{{book.title}}</h3>
+                    <p>by <span class="book-authors">{{book.authors}}</span></p>
+
+                    <ul>
+                        <li>Ratings</li>
+                        <li>{{book.readlater_set.all.count}} Want to read</li>
+                        <li>{{currently_reading.count}} Currently reading</li>
+                        <li>{{have_read.count}} Have Read</li>
+                    </ul>
+
+                    <hr>
+
+                </div>
+
+
+                <div class="description_and_review">
+
+                            <div class="description">
+                        <h4>Description</h4>
+
+                        <pre class="book--description">{{book.description}}</pre>
+
+                        {% if request.user.id in members_read %}
+                        <form action="" method="POST">
+                            <label>Review</label>
+                            <br>
+                            {{form.message}}
+
+                            <br>
+                            <input type="submit" value="Make review">
+                        </form>
+                                {% endif %}
+
+                    </div>
+
+
+                            <div class="review">
+                        <h4>Ratings & Review</h4>
+
+                        {% for review in book_reviews %}
+                        <div class="ind_review">
+                            <img src="{{review.member.profile_picture.url}}" alt="{{review.member.username}}">
+                            <h4>{{ review.member.username }}</h4>
+                            <span>{{review.date_created | timesince}} ago</span>
+
+                            <p>{{review.message| truncatechars:50}}</p>
+
+                        </div>
+                        {% empty %}
+                        <h3>No reviews Yet</h3>
+                        {% endfor %}
+
+<!--                        <button class="read-more">Read More</button>-->
+
+
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+
+        {% include "footer.html" %}
+    </div>
+
+</div>
+{% endblock %}

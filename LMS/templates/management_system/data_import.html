@@ -1,11 +1,148 @@
 {% extends "base_generic.html" %}
+{% load static%}
 
 {% block content %}
-<form action="" method="POST" enctype="multipart/form-data">
+<style>
+  .import_api_data{
+        height:500px;
+        position:absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%, -50%);
+        width:400px;
+        opacity:1;
+        padding:20px, 30px;
+        background-color:white;
+        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
+        border-radius:10px;
+    }
+
+    .import_api_data.active{
+        top:50%;
+        opacity:1;
+        transform:translate(-50%, -50%) scale(1);
+        transition: top 0ms ease-in-out 200ms,
+                    opacity 200ms ease-in-out 0ms,
+                    transform 0ms ease-in-out 00ms;
+                    }
+
+    .import_api_data h3{
+        height: 35px;
+        width: 229px;
+        font-family: Mulish;
+        font-size: 22px;
+        font-weight: 700;
+        line-height: 29px;
+        text-align: center;
+        color:#54565B;
+        margin: 40px 0px 50px 60px
+    }
+
+
+    .import_api_data{
+       margin:15px;
+
+    }
+
+    .import_api_data label{
+       margin-left:30px;
+    }
+
+      .import_api_data input[type=number],
+      .import_api_data input[type=text]{
+        border:1px solid #2A639C;
+        height: 30px;
+        width: 300px;
+        padding:5px;
+        border-radius: 15px;
+        margin-top:5px;
+        margin-left:30px;
+
+    }
+
+
+
+    .import_api_data input[type=submit]{
+        border:1px solid #2A639C;
+        background:#2A639C;
+        margin-top:5px;
+        height: 38px;
+        width: 330px;
+        border-radius: 8px;
+        color:white;
+        margin-left:20px;
+
+
+    }
+
+    .import_api_data input[type=submit]:hover{
+        cursor:pointer;
+
+    }
+
+    .import_api_data a{
+        text-decoration:none;
+    }
+
+
+
+
+    #back-to-signin{
+        height: 13px;
+        width: 6px;
+        margin-right:10px;
+
+    }
+
+    #import_books{
+       text-decoration:none;
+       margin-left:110px;
+       margin-top:25px;
+
+    }
+
+
+    #import_books_image_img{
+        height: 13px;
+        width: 6px;
+        margin-right:10px;
+        margin-bottom: -1px;
+
+    }
+
+</style>
+
+
+<div class="import_api_data">
+
+  <h3>Import API Data</h3>
+
+    <form action="" method="POST" enctype="multipart/form-data">
   {% csrf_token %}
-  {{form}}
+  <label>Name</label>
+  <br>
+  {{form.name}}
+  <br>
+  <br>
+
+  <label>Number Of Books</label>
+  <br>
+  {{form.number_of_books}}
+  <br>
+  <br>
+
+  <label>Api Link</label>
+  <br>
+  {{form.api_link}}
+  <br>
+  <br>
 
 
   <input type="submit" value="import">
 </form>
+
+    <p id="import_books"><a href="{% url 'accounts:sign_in' %}">
+        <img id='import_books_image_img' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To HomePage</a></p>
+
+</div>
 {% endblock %}

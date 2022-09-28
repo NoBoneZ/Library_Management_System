@@ -23,7 +23,8 @@ from .views import (home,
                     AcceptRenewalRequestView,
                     book_stock_report_csv,
                     popular_books_csv,
-                    high_paying_customers_csv
+                    high_paying_customers_csv,
+                    book_detail_view, read_later_view
                     )
 
 app_name = 'management_system'
@@ -31,6 +32,8 @@ app_name = 'management_system'
 urlpatterns = [
     path("", home, name="home"),
     path("add_book/", add_book, name="add_book"),
+    path("book_details/<int:pk>", book_detail_view, name="book_detail"),
+    path("read_later/<int:pk>", read_later_view, name="read_later"),
     path("edit_book_details/<int:pk>", edit_book_details, name="edit_book_details"),
     path("delete_book/<int:pk>", delete_book, name="delete_book"),
 

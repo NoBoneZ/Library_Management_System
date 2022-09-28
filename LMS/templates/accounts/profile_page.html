@@ -15,7 +15,7 @@
         border-left:25px solid #F9FAFB;
         border-right:25px solid #F9FAFB;
         border-radius:8px;
-        height:1500px;
+        height:1550px;
   }
 
 
@@ -71,9 +71,11 @@
     font-family: Inter;
     font-size: 12px;
     font-style: italic;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 14px;
     text-align: left;
+    margin-top:-15px;
+    color:#9fa19c;
 
 
   }
@@ -103,16 +105,26 @@
        padding:30px;
   }
 
-   .tab{
-       margin-top:-65px;
-       margin-right:180px;
-       cursor:pointer;
+    .tab{
+        margin-top:-80px;
+    }
+
+   .tab li{
+   list-style-type:none;
+   display:inline;
+   margin-left:80px;
+
+  }
+
+   .tab li:hover{
+        cursor:pointer;
+        color:#2E5185;
+
   }
 
 
   .tablinks{
-       display:inline;
-       margin:0px 60px -40px 80px ;
+      display:inline;
        font-family:mullish;
        height: 37px;
       width: 46px;
@@ -122,9 +134,28 @@
 
   }
 
+
+
   .tablinks:hover{
       transition: top 0ms ease-in-out 0ms;
       color:#2E5185;
+      cursor:pointer;
+  }
+
+  #wallet{
+    display:block;
+  }
+
+  #transaction{
+    display:none;
+  }
+
+  #inbox{
+    display:none;
+  }
+
+  #edit_profile{
+    display:none;
   }
 
 
@@ -170,7 +201,7 @@
      }
 
      #inbox ul{
-         margin-top:30px;
+         margin-top:80px;
      }
 
      .dropdown{
@@ -313,16 +344,18 @@
             <div class="profile--details">
 
                 <div class="tab">
-                  <p class="tablinks" onclick="openCity(event, 'wallet')">Wallet</p>
-                  <p class="tablinks" onclick="openCity(event, 'edit_profile')">Edit Profile</p>
-                  <p class="tablinks" onclick="openCity(event, 'transaction')">Transaction</p>
-                  <p class="tablinks" onclick="openCity(event, 'inbox')">Inbox</p>
+                    <ul>
+                  <li class="tablinks" onclick="openCity(event, 'wallet')">Wallet</li>
+                  <li class="tablinks" onclick="openCity(event, 'edit_profile')">Edit Profile</li>
+                  <li class="tablinks" onclick="openCity(event, 'transaction')">Transaction</li>
+                  <li class="tablinks" onclick="openCity(event, 'inbox')">Inbox</li>
+                        </ul>
 
                 </div>
 
 
-
-                 <div id="wallet" class="tabcontent">
+                 <div id="wallet" class="first-tab tabcontent">
+                     <h1>Just to test this shit</h1>
 
                 </div>
 
@@ -468,7 +501,9 @@
 </div>
 
 
+
 <script>
+console.log("running.....")
     function openCity(evt, cityName) {
       var i, tabcontent, tablinks
       tabcontent = document.getElementsByClassName('tabcontent')
@@ -480,13 +515,12 @@
         tablinks[i].className = tablinks[i].className.replace(' active', '')
       }
       document.getElementById(cityName).style.display = 'block'
-      evt.currentTarget.className += ' active'
+      evt.currentTarget.className += 'active'
     }
   </script>
-
 {% endblock %}
 
-
+<
 <!--  <script>-->
 <!--    function openCity(evt, cityName) {-->
 <!--      var i, tabcontent, tablinks-->

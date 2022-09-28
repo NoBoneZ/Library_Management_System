@@ -15,7 +15,7 @@ from django.core.mail import send_mail
 
 from .forms import CustomMembersCreationForm, WalletPinForm, RenewalRequestForm, CustomMembersChangeForm
 from .models import Members, Inbox, Wallet, WalletTransaction
-from management_system.models import BorrowedBook
+from management_system.models import BorrowedBook, BookReturn, RenewalRequest, BookRequest
 
 
 # Create your views here.
@@ -171,13 +171,26 @@ class MembersInboxView(ListView):
 
 class MembersBorrowedBooksView(ListView):
     model = BorrowedBook
-    template_name = "accounts/borrowed_books.html"
+    template_name = "book_properties_page.html"
+
+    def get_queryset(self):
+        return BookRequest.not_answered_objects.all()
 
     def get_context_data(self, *args, **kwargs):
         context = super(MembersBorrowedBooksView, self).get_context_data(*args, **kwargs)
+        bad_default_books = BorrowedBook.not_returned_objects.filter(debt_incurred_default__gte=500).values_list(
+            'borrower_id')
+
+        context["bad_default_members"] = Members.active_objects.filter(pk__in=bad_default_books)
+        context["book_requests"] = self.get_queryset()
+        context["unpicked_books"] = BorrowedBook.active_objects.filter(is_picked=False, is_returned=False)
+        context["book_returns"] = BookReturn.active_objects.all()
+        context["all_members"] = Members.active_objects.all()
+        context["suspended_members"] = Members.inactive_objects.all()
+        context["renewal_requests"] = RenewalRequest.active_objects.all()
         context["borrowed_books"] = BorrowedBook.not_returned_objects.filter(borrower_id=self.request.user.id)
-        context["unpicked_books"] = BorrowedBook.objects.filter(borrower_id=self.request.user.id, is_returned=False,
-                                                                is_active=True, is_picked=False)
+        context["user_unpicked_books"] = BorrowedBook.objects.filter(borrower_id=self.request.user.id, is_returned=False,
+                                                                is_active=True, is_picked=False).order_by('date_borrowed')
         context["default_books"] = BorrowedBook.not_returned_objects.filter(borrower_id=self.request.user.id,
                                                                             is_picked=True,
                                                                             date_to_be_returned__lte=datetime.datetime.today().date())
@@ -276,3 +289,16 @@ def transaction_report_csv(request):
         writer.writerow([(int(number) + 1), item.transaction_type, item.amount, item.description, item.date_occurred, item.outstanding_debts, item.balance ])
 
     return response
+
+
+# def credit_account(request):
+#     try:
+#         wallet = Wallet.objects.get(owner_id=request.user.id)
+#     except Wallet.DoesNotExist:
+#         messages.error(request, "Error , Wallet Not found")
+#         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+#
+#
+#     if request.method == "POST":
+#
+#

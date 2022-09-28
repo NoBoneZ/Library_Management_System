@@ -12,8 +12,8 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
-from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn, RenewalRequest
-from .forms import BookForm, ImportDataViaApiForm
+from .models import Genre, Book, BorrowedBook, BookRequest, BookReturn, RenewalRequest, BookReview, ReadLater
+from .forms import BookForm, ImportDataViaApiForm, BookReviewForm
 from accounts.models import Members, Inbox, Wallet, WalletTransaction
 
 
@@ -102,6 +102,8 @@ def home(request):
         "open_time": open_time,
         'close_time': close_time,
         "is_open": is_open,
+        "form": BookForm(),
+        "api_form": ImportDataViaApiForm(),
 
     }
     return render(request, "management_system/home.html", context)
@@ -154,9 +156,39 @@ def delete_book(request, pk):
     return HttpResponseRedirect(reverse("management_system:home"))
 
 
-class BookDetailView(DetailView):
-    model = Book
-    context_object_name = "single_book"
+def book_detail_view(request, pk):
+    try:
+        book = Book.active_objects.get(bookID=pk)
+    except Book.DoesNotExist:
+        messages.error(request, "Error! Kindly contact the Librarian")
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    if request.method == "POST":
+        form = BookReviewForm(request.POST, request.fILES)
+
+        if form.is_valid():
+            book_review = form.save(commit=False)
+            book_review.member = Members.active_objects.get(pk=request.user.id)
+            book_review.book = book
+            book_review.save()
+
+            messages.success(request, f'{book} reviewed successfully !')
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+        error = (form.errors.as_text()).split('*')
+        messages.error(request, len(error) - 1)
+        return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    context = {
+        "book": book,
+        "form": BookReviewForm(),
+        "book_reviews": BookReview.active_objects.filter(book_id=pk).order_by("date_created")[:5],
+        "currently_reading": BorrowedBook.not_returned_objects.filter(book_id=pk),
+        "have_read": BorrowedBook.returned_objects.filter(book_id=pk),
+        "members_read": [book.borrower_id for book in BorrowedBook.returned_objects.filter(book_id=pk)],
+
+    }
+
+    return render(request, "management_system/book_detail.html", context)
 
 
 class MakeBookRequestView(View):
@@ -392,7 +424,7 @@ def reject_book_return(request, pk):
 
 class ReportView(ListView):
     model = Book
-    template_name = "management_system/report.html"
+    template_name = "management_system/report_page.html"
 
     def get_queryset(self):
         return Book.active_objects.all()
@@ -473,7 +505,7 @@ def suspend_unsuspend_member(request, username):
 
 
 def test_(request):
-    return render(request, "403.html")
+    return render(request, "management_system/chart.html")
 
 
 class AcceptRenewalRequestView(View):
@@ -559,7 +591,8 @@ def popular_books_csv(request):
     writer.writerow(["S/N", "Title", "Times_lent", "Quantity in the library", "Total_Stock"])
 
     for number, item in enumerate(popular_books()):
-        writer.writerow([(int(number) + 1), item.title, item.times_borrowed(), item.quantity_available(), item.quantity])
+        writer.writerow(
+            [(int(number) + 1), item.title, item.times_borrowed(), item.quantity_available(), item.quantity])
 
     return response
 
@@ -578,3 +611,15 @@ def high_paying_customers_csv(request):
 
     return response
 
+
+def read_later_view(request, pk):
+    try:
+        book = Book.active_objects.get(bookID=pk)
+    except Book.DoesNotExist:
+        messages.error(request, "Book does not exist")
+
+    read_later_book = ReadLater.objects.get_or_create(book=book, member=Members.active_objects.get(request.user.id))[0]
+    read_later_book.save()
+
+    messages.success(request, f"{book} added successfully")
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

@@ -1,0 +1,268 @@
+{% extends "base_generic.html" %}
+
+
+{% block content %}
+<style>
+        .report--page{
+            display:grid;
+            grid-template-columns:0.5fr 3fr;
+        }
+
+        .report_tab ul{
+            margin-top:-40px
+        }
+
+        .report_tab li{
+            list-style-type:none;
+            margin-left:60px;
+            display:inline;
+            padding:5px;
+
+        }
+
+         .report_tab li:hover{
+           cursor:pointer;
+           color:#2E5185;
+        }
+
+        .report h3{
+            font-family: Mulish;
+            font-size: 25px;
+            font-weight: 400;
+            line-height: 29px;
+            text-align: left;
+            margin-left:30px;
+        }
+
+        .report_tab{
+            border-top:70px solid #F9FAFB;
+            border-bottom:65px solid #F9FAFB;
+            border-left:25px solid #F9FAFB;
+            border-right:25px solid #F9FAFB;
+            border-radius:8px;
+            height:1550px;
+      }
+
+
+       .report_tab button{
+         background-color: #2A639C;
+         color:white;
+         border-radius:10px;
+         width: 222.35px;
+         height: 47.2px;
+         cursor:pointer;
+         border: 1px solid #2A639C;
+
+       }
+
+      .report_tab a{
+         text-decoration:none;
+         color:white;
+
+     }
+
+
+     .report_tab table{
+        margin-top:30px;
+        border-radius:10px;
+        border-collapse:collapse;
+        width:95%;
+        margin:80px 30px 0px 30px;
+        padding:5px;
+     }
+
+     .report_tab td, th{
+           padding:10px;
+     }
+
+     .report_tab thead{
+        background-color:hsla(0, 0%, 92%, 1);
+        border-radius: 10px;
+     }
+
+     .report_tab td{
+        margin-top:30px;
+         text-align:center;
+
+     }
+
+    .report_tab tr{
+        border-bottom: 1px solid gainsboro;
+    }
+
+    #total_stock{
+        display:block;
+    }
+
+    #popular_books,
+    #high_paying_customers{
+        display:none;
+    }
+
+    .book_store_csv{
+        margin: 110px 0px 0px 450px;
+    }
+
+    .popular_books_pdf{
+        margin:110px 0px 450px;
+
+
+    }
+
+
+
+
+
+</style>
+
+
+<div class="report--page">
+
+    {% include "genre_component.html" %}
+
+    <div class="report">
+        {% include 'navbar.html' %}
+
+            <h3>Reports</h3>
+         <div class="report_tab">
+                          <ul>
+                              <li class="report_tablinks" onclick="openCity(event, 'total_stock')">Total Stock</li>
+                              <li class="report_tablinks" onclick="openCity(event, 'popular_books')">Popular Books</li>
+                              <li class="report_tablinks" onclick="openCity(event, 'high_paying_customers')">High Paying Customers</li>
+
+                          </ul>
+
+
+                    <div id="total_stock" class="first-tab tabcontent">
+                             <table>
+                                <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Title</th>
+                                    <th>Quantity lent out</th>
+                                    <th>Quantity in the library</th>
+                                    <th>Total stock</th>
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                {% for book in all_books %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{book.title}}</td>
+                                    <td>{{book.quantity_available}}</td>
+                                    <td>{{book.quantity_lent_out}}</td>
+                                    <td>{{book.quantity}}</td>
+                                </tr>
+                                {% empty %}
+                                <td colspan="5">No Book In The Library</td>
+                                {% endfor %}
+
+                                </tbody>
+                        </table>
+
+                         <a href="{% url 'management_system:book_stock_csv' %}"><button type="submit" class="book_store_csv"> Download Book Stock Csv</button></a>
+
+
+                    </div>
+
+
+                    <div id="popular_books" class="first-tab tabcontent">
+                          <table>
+                                <thead>
+                                <tr>
+                                    <th>S/N</th>
+                                    <th>Title</th>
+                                    <th>Times Lent Out</th>
+                                    <th>Quantity in the library</th>
+                                    <th>Total stock</th>
+                                </tr>
+
+                                </thead>
+
+                                <tbody>
+                                 {% for book in popular_books %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{book.title}}</td>
+                                        <td>{{book.times_borrowed}}</td>
+                                        <td>{{book.quantity_available}}</td>
+                                        <td>{{book.quantity}}</td>
+                                    </tr>
+                                 {% empty %}
+                                    <td colspan="5">No Book In This Section</td>
+                                 {% endfor %}
+
+                                </tbody>
+                        </table>
+
+                        <a href="{% url 'management_system:popular_books_pdf' %}"><button type="submit" class="popular_books_pdf"> Download Popular Books Pdf</button></a>
+                        <a href="{% url 'management_system:popular_books_csv' %}"><button type="submit" class="popular_books_csv"> Download Popular Books Csv</button></a>
+
+
+
+                    </div>
+
+
+                    <div id="high_paying_customers" class="first-tab tabcontent">
+                        <table>
+                                <h2>High Paying Customers</h2>
+                                <thead>
+                                    <tr>
+                                        <th>S/N</th>
+                                        <th>Name</th>
+                                        <th>Wallet ID</th>
+                                        <th>Amount Spent</th>
+                                        <th>Current Balance</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                        {% for customer in high_paying_customers %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{customer.owner.username}}</td>
+                                            <td>{{customer.wallet_number}}</td>
+                                            <td>{{customer.sum_of_debit}}</td>
+                                            <td>{{customer.balance}}</td>
+                                        {% empty %}
+                                        <td colspan="4">No User fits this description</td>
+                                        {% endfor %}
+                                            </tr>
+
+                                </tbody>
+                            </table>
+
+                        <a href="{% url 'management_system:high_paying_customers_pdf' %}"><button type="submit"> Download High Paying Customer Pdf</button></a>
+                        <a href="{% url 'management_system:high_paying_customers_csv' %}"><button type="submit"> Download High Paying CustomersCsv</button></a>
+
+
+                    </div>
+
+
+         </div>
+
+        {% include 'footer.html' %}
+    </div>
+
+</div>
+
+<script>
+console.log("running.....")
+    function openCity(evt, cityName) {
+      var i, tabcontent, tablinks
+      tabcontent = document.getElementsByClassName('tabcontent')
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none'
+      }
+      tablinks = document.getElementsByClassName('tablinks')
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' active', '')
+      }
+      document.getElementById(cityName).style.display = 'block'
+      evt.currentTarget.className += 'active'
+    }
+  </script>
+{% endblock %}

@@ -1,0 +1,319 @@
+{% extends "base_generic.html" %}
+
+
+{% block content %}
+<style>
+
+    .book--header{
+        display:grid;
+        grid-template-columns:0.5fr 3fr;
+
+    }
+
+    .book_tab li{
+        list-style-type:none;
+        display:inline;
+        margin-right:40px;
+        padding:5px;
+    }
+
+    .book_tab li:hover{
+       cursor:pointer;
+       color:#2E5185;
+    }
+
+    .book--properties h3{
+        font-family: Mulish;
+        font-size: 25px;
+        font-weight: 400;
+        line-height: 29px;
+        text-align: left;
+    }
+
+    .book--container{
+        border-top:70px solid #F9FAFB;
+        border-bottom:65px solid #F9FAFB;
+        border-left:25px solid #F9FAFB;
+        border-right:25px solid #F9FAFB;
+        border-radius:8px;
+        height:1550px;
+  }
+
+   .book--container li{
+        list-style-type:none;
+
+   }
+
+    .book_tab{
+        margin-top:-60px;
+    }
+
+    #book_request,
+    #unpicked_books,
+    #books_returned,
+    #renewal_request,
+    #my_unpicked_books,
+    #my_borrowed_books,
+    #my_default_books{
+        display:none;
+    }
+
+
+
+    #book_request{
+       margin-top:100px;
+       display:block;
+    }
+
+    #my_unpicked_books,
+    #renewal_request,
+    #books_returned,
+    #unpicked_books{
+         margin-top:100px;
+    }
+
+    #my_unpicked_books li,
+   #renewal_request li,
+   #books_returned li,
+   #unpicked_books li,
+   #book_request li{
+       padding:10px;
+       margin-left:30px
+       margin-right:30px;
+       width:1100px;
+   }
+
+   #my_unpicked_books li:nth-child(odd),
+   #renewal_request li:nth-child(odd),
+   #books_returned li:nth-child(odd),
+   #unpicked_books li:nth-child(odd),
+   #book_request li:nth-child(odd){
+      background-color:#F5F3F3;
+    }
+
+
+   #my_unpicked_books p,
+   #renewal_request p,
+   #books_returned p,
+   #unpicked_books p,
+   #book_request p{
+    font-family: Mulish;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 15px;
+    letter-spacing: 3px;
+    text-align: left;
+   }
+
+   #renewal_request button,
+   #books_returned button,
+   #unpicked_books button,
+   #book_request button{
+    margin-left:80px;
+    width:89px;
+    height:35px;
+    border-radius:8px;
+    color:white;
+   }
+
+    .m_b_r
+    .approve_rr,
+    .approve_br,
+    .picked_ub,
+    .accept_bq{
+        border:1px solid #09C105;
+        background-color:#09C105;
+
+   }
+
+    .a_b_r,
+    .reject_rr,
+    .reject_br,
+    .delete_ub,
+    .reject_bq{
+        border:1px solid #AB0520;
+        background-color:#AB0520;
+
+   }
+
+   .a_b_r:hover
+   .m_b_r:hover,
+   .approve_rr:hover,
+   .reject_rr:hover,
+   .approve_br:hover,
+   .reject_br:hover,
+   .picked_ub:hover,
+   .delete_ub:hover,
+   .reject_bq:hover,
+   .accept_bq:hover{
+        cursor:pointer
+   }
+
+    .buttons{
+        float:right;
+        margin-top:-38px;
+        margin-right:60px;
+   }
+
+
+
+
+
+
+
+
+</style>
+<div class="book--header">
+
+        {% include "genre_component.html" %}
+
+        <div class="book--properties">
+            {% include "navbar.html" %}
+            <h3>Books</h3>
+
+            <div class="book--container">
+
+                    <div class="book_tab">
+                          <ul>
+                              <li class="book_tablinks" onclick="openCity(event, 'book_request')">Book Request</li>
+                              <li class="book_tablinks" onclick="openCity(event, 'unpicked_books')">Unpicked Books</li>
+                              <li class="book_tablinks" onclick="openCity(event, 'books_returned')">Books Returned</li>
+                              <li class="book_tablinks" onclick="openCity(event, 'renewal_request')">Renewal Request</li>
+                              <li class="book_tablinks" onclick="openCity(event, 'my_unpicked_books')">My Unpicked Books</li>
+                              <li class="book_tablinks" onclick="openCity(event, 'my_borrowed_books')">My Borrowed Books</li>
+                              <li class="book_tablinks" onclick="openCity(event, 'my_default_books')">My Default Books</li>
+                          </ul>
+                    </div>
+
+                    <div id="book_request" class="first-tab tabcontent">
+                        <ul>
+                            {% for book_request in book_requests %}
+                            <li>
+                                <p>{{forloop.counter}}. <strong>{{book_request.name.username | title}}</strong> wants to lend <em>{{book_request.book |truncatechars:22}}</em>{{book_request.date_requested}}</p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:accept_book_request' book_request.id %}" ><button class="accept_bq">Accept</button></a>
+                                <a href="{% url 'management_system:reject_book_request' book_request.id %}" ><button class="reject_bq">Reject</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Requests at the moment</li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+
+
+                     <div id="unpicked_books" class="first-tab tabcontent">
+                            <ul>
+                            {% for unpicked_book in unpicked_books %}
+                            <li>
+                                <p>{{forloop.counter}}.  <em>{{unpicked_book.book |truncatechars:22}}</em> to be picked by <strong>{{unpicked_book.borrower.username | title}}</strong>{{unpicked_book.date_requested}}</p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:pick_unpicked_books' unpicked_book.id %}" ><button class="picked_ub">Picked</button></a>
+                                <a href="{% url 'management_system:delete_unpicked_books' unpicked_book.id %}" ><button class="delete_ub">Delete</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Unpicked Book at the moment</li>
+                            {% endfor %}
+                        </ul>
+
+                    </div>
+
+
+
+                    <div id="books_returned" class="first-tab tabcontent">
+                             <ul>
+                            {% for book_return in book_returns %}
+                            <li>
+                                <p>{{forloop.counter}}. <strong>{{book_return.borrowed_book.borrower.username | title}}</strong> wants to return <em>{{book_return.borrowed_book.book  |truncatechars:22}}</em></p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:approve_book_return' book_return.id %}" ><button class="approve_br">Approve</button></a>
+                                <a href="{% url 'management_system:reject_book_return' book_return.id %}}" ><button class="reject_br">Reject</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Books Returned at the moment</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+
+                    <div id="renewal_request" class="first-tab tabcontent">
+                             <ul>
+                            {% for renewal_request in renewal_requests %}
+                            <li>
+                                <p>{{forloop.counter}}. <strong>{{renewal_request.borrowed_book.borrower.username | title}}</strong> wants to renew <em>{{renew_request.borrowed_book.book  |truncatechars:22}}</em> to be returned on {{renew_request.new_date_of_return}}</p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:accept_renewal' renewal_request.id %}"><button class="approve_rr">Approve</button></a>
+                                <a href="{% url 'management_system:reject_renewal' renewal_request.id %}"><button class="reject_rr">Reject</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Books Returned at the moment</li>
+                            {% endfor %}
+                             </ul>
+                    </div>
+
+
+                    <div id="my_unpicked_books" class="first-tab tabcontent">
+                           <ul>
+                            {% for unpicked_book in user_unpicked_books %}
+                            <li>
+                                <p>{{forloop.counter}}. You are yet to pick  <em>{{unpicked_book.book |truncatechars:22}}</em> from the Library, since {{unpicked_book.date_borrowed | timesince}} ago</p>
+                            </li>
+                            {% empty %}
+                            <li>No Unpicked Book at the moment</li>
+                            {% endfor %}
+                           </ul>
+                    </div>
+
+
+                    <div id="my_borrowed_books" class="first-tab tabcontent">
+                           <ul>
+                            {% for borrowed_book in borrowed_books %}
+                            <li>
+                                <p>{{forloop.counter}}.  <em>{{unpicked_book.book |truncatechars:22}}</em> ,  {{borrowed__book.date_borrowed | timesince}} ago</p>
+                                <div class="buttons">
+                                <a href="{% url 'management_system:make_book_return' borrowed_book.id %}"><button class="m_b_r">Make Book Return</button></a>
+                                <a href="{% url 'accounts:make_renewal' borrowed_book.id %}"><button class="a_p_r">Apply For Renewal</button></a>
+                                </div>
+                            </li>
+                            {% empty %}
+                            <li>No Borrowed Book at the moment</li>
+                            {% endfor %}
+                           </ul>
+                    </div>
+
+
+<!--                    <div id="wallet" class="first-tab tabcontent">-->
+<!--                                 <h1>Just to test this shit</h1>-->
+
+<!--                    </div>-->
+
+
+            </div>
+            {% include footer.html %}
+
+        </div>
+
+
+</div>
+
+<script>
+console.log("running.....")
+    function openCity(evt, cityName) {
+      var i, tabcontent, tablinks
+      tabcontent = document.getElementsByClassName('tabcontent')
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = 'none'
+      }
+      tablinks = document.getElementsByClassName('tablinks')
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(' active', '')
+      }
+      document.getElementById(cityName).style.display = 'block'
+      evt.currentTarget.className += 'active'
+    }
+  </script>
+{% endblock %}

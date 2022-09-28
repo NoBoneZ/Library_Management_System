@@ -25,7 +25,7 @@ urlpatterns = [
     path("profile_page/", profile_page_view, name="profile_page"),
 
     path("inbox/", MembersInboxView.as_view(), name="member_inbox"),
-    path("borrowed_books/", MembersBorrowedBooksView.as_view(), name="member_borrowed_books"),
+    path("books/", MembersBorrowedBooksView.as_view(), name="books"),
     path("wallet/", wallet_view, name="member_wallet"),
     path("book_calendar/", books_calendar_view, name="books_calendar"),
     path("make_renewal_request/<int:pk>", make_renewal_request, name="make_renewal"),
