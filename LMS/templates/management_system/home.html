@@ -263,219 +263,6 @@
       cursor:pointer;
    }
 
-    .create_book textarea,
-    .create_book select,
-    .create_book input[type=text]{
-        border:1px solid #2A639C;
-        height: 30px;
-        width: 300px;
-        padding:5px;
-        border-radius: 15px;
-        margin-top:5px;
-        margin-left:30px;
-
-    }
-
-    .create_book input[type=file]{
-           margin-left:30px;
-    }
-
-    .create_book{
-       margin:15px;
-
-    }
-
-    .create_book label{
-       margin-left:30px;
-    }
-
-
-
-    .create_book input[type=submit]{
-        border:1px solid #2A639C;
-        background:#2A639C;
-        margin-top:5px;
-        height: 38px;
-        width: 330px;
-        border-radius: 8px;
-        color:white;
-        margin-left:20px;
-
-
-    }
-
-    .create_book input[type=submit]:hover{
-        cursor:pointer;
-
-    }
-
-    .create_book a{
-        text-decoration:none;
-    }
-
-     .create_book a{
-       text-decoration:none;
-       margin-top:-5px;
-    }
-
-
-    #back-to-signin{
-        height: 13px;
-        width: 6px;
-        margin-right:10px;
-
-    }
-
-    #create_book_home{
-       text-decoration:none;
-       margin-left:110px;
-       margin-top:15px;
-
-    }
-
-    #create_book_home_img{
-        height: 13px;
-        width: 6px;
-        margin-right:10px;
-        margin-bottom: -1px;
-
-    }
-
-   .create_book{
-        height:670px;
-        position:absolute;
-        top:-150%;
-        left:50%;
-        transform:translate(-50%, -50%);
-        width:400px;
-        opacity:0;
-        padding:20px, 30px;
-        background-color:white;
-        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
-        border-radius:10px;
-    }
-
-   .create_book.active{
-        top:50%;
-        opacity:1;
-        transform:translate(-50%, -50%) scale(1);
-        transition: top 0ms ease-in-out 200ms,
-                    opacity 200ms ease-in-out 0ms,
-                    transform 0ms ease-in-out 00ms;
-   }
-
-
-
-   .import_api_data{
-        height:500px;
-        position:absolute;
-        top:-150%;
-        left:50%;
-        transform:translate(-50%, -50%);
-        width:400px;
-        opacity:0;
-        padding:20px, 30px;
-        background-color:white;
-        box-shadow:2px 2px 5px 5px rgba(0,0,0,0.15);
-        border-radius:10px;
-   }
-
-   .import_api_data.active{
-        top:50%;
-        opacity:1;
-        transform:translate(-50%, -50%) scale(1);
-        transition: top 0ms ease-in-out 200ms,
-                    opacity 200ms ease-in-out 0ms,
-                    transform 0ms ease-in-out 00ms;
-   }
-
-   .import_api_data h3{
-        height: 35px;
-        width: 229px;
-        font-family: Mulish;
-        font-size: 22px;
-        font-weight: 700;
-        line-height: 29px;
-        text-align: center;
-        color:#54565B;
-        margin: 40px 0px 50px 60px
-   }
-
-
-   .import_api_data{
-       margin:15px;
-
-   }
-
-   .import_api_data label{
-       margin-left:30px;
-   }
-
-   .import_api_data input[type=number],
-   .import_api_data input[type=text]{
-        border:1px solid #2A639C;
-        height: 30px;
-        width: 300px;
-        padding:5px;
-        border-radius: 15px;
-        margin-top:5px;
-        margin-left:30px;
-
-   }
-
-
-
-   .import_api_data input[type=submit]{
-        border:1px solid #2A639C;
-        background:#2A639C;
-        margin-top:5px;
-        height: 38px;
-        width: 330px;
-        border-radius: 8px;
-        color:white;
-        margin-left:20px;
-
-
-   }
-
-   .import_api_data input[type=submit]:hover{
-        cursor:pointer;
-
-   }
-
-    .import_api_data a{
-        text-decoration:none;
-   }
-
-
-
-
-   #back-to-signin{
-        height: 13px;
-        width: 6px;
-        margin-right:10px;
-
-   }
-
-   #import_books{
-       text-decoration:none;
-       margin-left:110px;
-       margin-top:25px;
-
-   }
-
-
-   #import_books_image_img{
-        height: 13px;
-        width: 6px;
-        margin-right:10px;
-        margin-bottom: -1px;
-
-   }
-
-
-
-
 </style>
 
 
@@ -604,93 +391,93 @@
 
 </div>
 
-<div class="create_book">
+<!--<div class="create_book">-->
 
-    <h3>Create Book</h3>
+<!--    <h3>Create Book</h3>-->
 
-    <form action="{% url 'management_system:add_book' %}" method="POST">
-    {% csrf_token %}
-
-
-    <label>Title</label>
-    <br>
-    {{form.title}}
-    <br>
-    <br>
-
-    <label>Genre</label>
-    <br>
-    {{form.genre}}
-    <br>
-    <br>
-
-    <label>Authors</label>
-    <br>
-    {{form.authors}}
-    <br>
-    <br>
-
-    <label>Thumbnail</label>
-    <br>
-    {{form.thumbnail}}
-    <br>
-    <br>
-
-    <label>Descripton</label>
-    <br>
-    {{form.description}}
-    <br>
-    <br>
-
-    <label>ISBN13</label>
-    <br>
-    {{form.isbn13}}
-    <br>
-    <br>
-
-    <br>
-    <input type="submit" value="Create Book">
-</form>
+<!--    <form action="{% url 'management_system:add_book' %}" method="POST">-->
+<!--    {% csrf_token %}-->
 
 
-    <p id="create_book_home"><a href="{% url 'management_system:home' %}">
-        <img id='create_book_home_img' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To HomePage</a></p>
+<!--    <label>Title</label>-->
+<!--    <br>-->
+<!--    {{form.title}}-->
+<!--    <br>-->
+<!--    <br>-->
 
-</div>
+<!--    <label>Genre</label>-->
+<!--    <br>-->
+<!--    {{form.genre}}-->
+<!--    <br>-->
+<!--    <br>-->
+
+<!--    <label>Authors</label>-->
+<!--    <br>-->
+<!--    {{form.authors}}-->
+<!--    <br>-->
+<!--    <br>-->
+
+<!--    <label>Thumbnail</label>-->
+<!--    <br>-->
+<!--    {{form.thumbnail}}-->
+<!--    <br>-->
+<!--    <br>-->
+
+<!--    <label>Descripton</label>-->
+<!--    <br>-->
+<!--    {{form.description}}-->
+<!--    <br>-->
+<!--    <br>-->
+
+<!--    <label>ISBN13</label>-->
+<!--    <br>-->
+<!--    {{form.isbn13}}-->
+<!--    <br>-->
+<!--    <br>-->
+
+<!--    <br>-->
+<!--    <input type="submit" value="Create Book">-->
+<!--</form>-->
 
 
-<div class="import_api_data">
+<!--    <p id="create_book_home"><a href="{% url 'management_system:home' %}">-->
+<!--        <img id='create_book_home_img' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To HomePage</a></p>-->
 
-  <h3>Import API Data</h3>
-
-    <form action="" method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  <label>Name</label>
-  <br>
-  {{api_form.name}}
-  <br>
-  <br>
-
-  <label>Number Of Books</label>
-  <br>
-  {{api_form.number_of_books}}
-  <br>
-  <br>
-
-  <label>Api Link</label>
-  <br>
-  {{api_form.api_link}}
-  <br>
-  <br>
+<!--</div>-->
 
 
-  <input type="submit" value="Import">
-</form>
+<!--<div class="import_api_data">-->
 
-    <p id="import_books"><a href="">
-        <img id='import_books_image_img' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To HomePage</a></p>
+<!--  <h3>Import API Data</h3>-->
 
-</div>
+<!--    <form action="" method="POST" enctype="multipart/form-data">-->
+<!--  {% csrf_token %}-->
+<!--  <label>Name</label>-->
+<!--  <br>-->
+<!--  {{api_form.name}}-->
+<!--  <br>-->
+<!--  <br>-->
+
+<!--  <label>Number Of Books</label>-->
+<!--  <br>-->
+<!--  {{api_form.number_of_books}}-->
+<!--  <br>-->
+<!--  <br>-->
+
+<!--  <label>Api Link</label>-->
+<!--  <br>-->
+<!--  {{api_form.api_link}}-->
+<!--  <br>-->
+<!--  <br>-->
+
+
+<!--  <input type="submit" value="Import">-->
+<!--</form>-->
+
+<!--    <p id="import_books"><a href="">-->
+<!--        <img id='import_books_image_img' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To HomePage</a></p>-->
+
+<!--</div>-->
 
 <script>
 
