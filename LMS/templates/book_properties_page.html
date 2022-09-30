@@ -348,33 +348,6 @@ console.log("running.....")
       evt.currentTarget.className += 'active'
     }
   </script>
-
-
-
-<div class="renewal--form">
-
-    <h3>Renewal Form</h3>
-    <form action="">
-        {% csrf_token %}
-
-        <label>Renewal Days</label>
-        <br>
-        {{form.renewal_days}}
-        <br>
-        <br>
-
-        <input type="submit" value="Make request">
-
-        <p id="renewal--paragraph"><a href="{% url 'accounts:books' %}">
-            <img id='renewal--image' src="{% static 'images/img_1.png'%}" alt="Sign In">Back To Books Page</a></p>
-
-    </form>
-
-</div>
-
-
-
-
 <script>
      document.querySelector(".a_p_r").addEventListener("click", function(){
 
