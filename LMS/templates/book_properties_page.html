@@ -260,14 +260,14 @@
                              <ul>
                             {% for renewal_request in renewal_requests %}
                             <li>
-                                <p>{{forloop.counter}}. <strong>{{renewal_request.borrowed_book.borrower.username | title}}</strong> wants to renew <em>{{renew_request.borrowed_book.book  |truncatechars:22}}</em> to be returned on {{renew_request.new_date_of_return}}</p>
+                                <p>{{forloop.counter}}. <strong>{{renewal_request.borrowed_book.borrower.username | title}}</strong> wants to renew <em>{{renewal_request.borrowed_book.book  |truncatechars:22}}</em> to be returned on {{renewal_request.new_date_of_return }}</p>
                                 <div class="buttons">
                                 <a href="{% url 'management_system:accept_renewal' renewal_request.id %}"><button class="approve_rr">Approve</button></a>
                                 <a href="{% url 'management_system:reject_renewal' renewal_request.id %}"><button class="reject_rr">Reject</button></a>
                                 </div>
                             </li>
                             {% empty %}
-                            <li>No Books Returned at the moment</li>
+                            <li>No Renewal Request at the moment</li>
                             {% endfor %}
                              </ul>
                     </div>

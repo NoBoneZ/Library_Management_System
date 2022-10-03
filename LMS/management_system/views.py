@@ -213,7 +213,7 @@ class MakeBookRequestView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         wallet = Wallet.objects.get(owner_id=request.user.id)
 
-        if wallet.outstanding_debts >= 490:
+        if wallet.outstanding_debts >= 50:
             messages.error(request, "Your Outstanding debts is too much, Kindly settle some !")
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
@@ -353,11 +353,8 @@ class RejectBookRequestView(UserPassesTestMixin, LoginRequiredMixin, View):
         return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
-class MakeBookReturnsView(UserPassesTestMixin, LoginRequiredMixin, View):
+class MakeBookReturnsView(LoginRequiredMixin, View):
     login_url = "accounts:sign_in"
-
-    def test_func(self):
-        return self.request.user.is_staff
 
     def get(self, request, *args, **kwargs):
         try:
@@ -411,20 +408,20 @@ def approve_book_return(request, pk):
     #     member_wallet.save()
     #
     # else:
-    if (member_wallet.balance - (5 + borrowed_book.debt_incurred_default)) < 0:
-        member_wallet.balance -= (5 + borrowed_book.debt_incurred_default)
+    if (member_wallet.balance - (1000 + borrowed_book.debt_incurred_default)) < 0:
+        member_wallet.balance -= (1000 + borrowed_book.debt_incurred_default)
         member_wallet.outstanding_debts += abs(member_wallet.balance)
         member_wallet.balance = 0
         member_wallet.save()
     else:
-        member_wallet.balance -= (5 + borrowed_book.debt_incurred_default)
+        member_wallet.balance -= (1353 + borrowed_book.debt_incurred_default)
         member_wallet.save()
 
     member_wallet_transaction = WalletTransaction.objects.create(
         wallet=member_wallet,
         transaction_type="Debit",
         description=f"Fee on the return of {borrowed_book.book}",
-        amount=5,
+        amount=1000,
         balance=member_wallet.balance,
         outstanding_debts=member_wallet.outstanding_debts,
 
@@ -434,7 +431,7 @@ def approve_book_return(request, pk):
     member_message = Inbox.objects.create(
         receiver=Members.active_objects.get(id=book_return.borrowed_book.borrower_id),
         sender="The library",
-        message=f"Your book return has been approved, You have been charged the standard Rs.5 .Thank you"
+        message=f"Your book return has been approved, You have been charged the standard Rs.20 .Thank you"
 
     )
     member_message.save()

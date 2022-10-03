@@ -24,7 +24,11 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("management_system/", include("management_system.urls")),
     path("", RedirectView.as_view(url="management_system/")),
-    path("payments", include("payments.urls")),
+    path("payments/", include("payments.urls")),
+    path("api/", include("api.urls")),
+    path("api/accounts/", include("api.accounts.urls")),
+    path("api/management_system_api/", include("api.management_system.urls")),
+    path("api_auth/", include("rest_framework.urls"))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

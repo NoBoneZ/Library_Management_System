@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "crispy_forms",
     'payments',
+    "rest_framework"
 
 ]
 

@@ -42,14 +42,14 @@ def sign_up(request):
             print(form.cleaned_data["email"])
 
             member_wallet = Wallet.objects.create(
-                owner=Members.objects.get(email=form.cleaned_data["email"])
+                owner=Members.active_objects.get(email=form.cleaned_data["email"])
 
             )
 
             member_wallet.save()
 
             member_message = Inbox.objects.create(
-                receiver=Members.active_objects.get(username=request.POST.get("username")),
+                receiver=Members.active_objects.get(email=form.cleaned_data["email"]),
                 sender="The Librarian",
                 message=f"Welcome to Vilgax Library, A wallet has been created for you, Your wallet number is"
                         f"  {member_wallet.wallet_number} and your pin is {member_wallet.pin}....Once again, Welcome"
@@ -255,6 +255,7 @@ def make_renewal_request(request, pk):
                 days=form.cleaned_data.get("renewal_days"))
             renewal.save()
 
+            print(renewal.new_date_of_return)
             messages.success(request, "renewal request sent successfully, Kindly check your inbox for updates")
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
         error = (form.errors.as_text()).split("*")

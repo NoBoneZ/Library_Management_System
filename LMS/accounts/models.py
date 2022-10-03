@@ -9,6 +9,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
+
+
 #
 
 # Create your models here.
@@ -75,11 +77,16 @@ class Members(AbstractUser):
     active_objects = MembersActiveManager()
     inactive_objects = MembersInActiveManager()
 
+    @property
+    def wallet_number(self):
+        return Wallet.objects.get(owner_id=self.id)
+
 
 class Wallet(models.Model):
     owner = models.OneToOneField(Members, on_delete=models.SET_NULL, null=True)
     wallet_number = models.UUIDField(editable=False, unique=True, null=True, default=uuid4)
-    pin = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)], default=int("".join(sample(digits, 4))))
+    pin = models.IntegerField(validators=[MinValueValidator(1000), MaxValueValidator(9999)],
+                              default=int("".join(sample(digits, 4))))
     balance = models.DecimalField(null=True, decimal_places=2, default=0.00,
                                   max_digits=35, validators=[MinValueValidator(0.0)])
     outstanding_debts = models.DecimalField(null=True, blank=True, decimal_places=2,
