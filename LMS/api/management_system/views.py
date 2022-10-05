@@ -3,8 +3,12 @@ from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIV
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 
 from .serializers import BookSerializer
+from .permissions import IsStaffOrReadOnly
+from .mixins import IsStaffOrReadOnlyMixins
 from management_system.models import Book
 
 
@@ -15,12 +19,13 @@ class ManagementSystemApiRoot(APIView):
         })
 
 
-class BookListView(ListCreateAPIView):
+class BookListView(IsStaffOrReadOnlyMixins, ListCreateAPIView):
     queryset = Book.active_objects.all()
     serializer_class = BookSerializer
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
 
 
-class BookDetailView(RetrieveUpdateDestroyAPIView):
+class BookDetailView(IsStaffOrReadOnlyMixins, RetrieveUpdateDestroyAPIView):
     queryset = Book.active_objects.all()
     serializer_class = BookSerializer
 

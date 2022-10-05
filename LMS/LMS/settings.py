@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "crispy_forms",
     'payments',
-    "rest_framework"
+    "rest_framework",
+    "rest_framework.authtoken",
 
 ]
 
@@ -153,5 +154,18 @@ EMAIL_HOST_USER = 'koderblvck@gmail.com'
 EMAIL_HOST_PASSWORD = 'xagfwzvkkbgbelif'
 EMAIL_PORT = 465
 
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication"
+    ],
+
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
+    ]
+
+}
 
 

@@ -408,20 +408,20 @@ def approve_book_return(request, pk):
     #     member_wallet.save()
     #
     # else:
-    if (member_wallet.balance - (1000 + borrowed_book.debt_incurred_default)) < 0:
-        member_wallet.balance -= (1000 + borrowed_book.debt_incurred_default)
+    if (member_wallet.balance - (5 + borrowed_book.debt_incurred_default)) < 0:
+        member_wallet.balance -= (5 + borrowed_book.debt_incurred_default)
         member_wallet.outstanding_debts += abs(member_wallet.balance)
         member_wallet.balance = 0
         member_wallet.save()
     else:
-        member_wallet.balance -= (1353 + borrowed_book.debt_incurred_default)
+        member_wallet.balance -= (5 + borrowed_book.debt_incurred_default)
         member_wallet.save()
 
     member_wallet_transaction = WalletTransaction.objects.create(
         wallet=member_wallet,
         transaction_type="Debit",
         description=f"Fee on the return of {borrowed_book.book}",
-        amount=1000,
+        amount=5,
         balance=member_wallet.balance,
         outstanding_debts=member_wallet.outstanding_debts,
 
@@ -431,7 +431,7 @@ def approve_book_return(request, pk):
     member_message = Inbox.objects.create(
         receiver=Members.active_objects.get(id=book_return.borrowed_book.borrower_id),
         sender="The library",
-        message=f"Your book return has been approved, You have been charged the standard Rs.20 .Thank you"
+        message=f"Your book return has been approved, You have been charged the standard Rs.5 .Thank you"
 
     )
     member_message.save()
